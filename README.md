@@ -59,77 +59,15 @@ DevType was born out of that frustration. I wanted something that feels like a r
 
 ---
 
-## 🏗️ Architecture
+## 🛠️ Tech Stack
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                      FRONTEND                           │
-│  ┌──────────┐  ┌──────────┐  ┌────────────────────┐    │
-│  │  React   │  │  Zustand  │  │   GSAP + Tailwind  │    │
-│  │  19 + TS │  │  Stores   │  │   Animations + UI  │    │
-│  └────┬─────┘  └─────┬────┘  └────────┬───────────┘    │
-│       │              │               │                  │
-│       └──────────────┼───────────────┘                  │
-│                      │                                  │
-├──────────────────────┼──────────────────────────────────┤
-│                  NEXT.JS 16                             │
-│              App Router + Middleware                     │
-│                      │                                  │
-├──────────────────────┼──────────────────────────────────┤
-│                   API LAYER                             │
-│  ┌────────┐  ┌──────────┐  ┌───────────┐  ┌────────┐  │
-│  │  Auth   │  │ Snippets │  │  Scores   │  │ Dashbd │  │
-│  │ Routes  │  │  Route   │  │  Route    │  │ Route  │  │
-│  └────┬───┘  └────┬─────┘  └─────┬─────┘  └───┬────┘  │
-│       └───────────┼──────────────┼─────────────┘       │
-│                   │              │                      │
-├───────────────────┼──────────────┼──────────────────────┤
-│                 DATABASE                                │
-│        ┌──────────┴──────────────┴──────────┐          │
-│        │    MongoDB + Prisma ORM            │          │
-│        │  ┌──────┐ ┌────────┐ ┌──────────┐ │          │
-│        │  │ User │ │Snippet │ │TestResult│ │          │
-│        │  └──────┘ └────────┘ └──────────┘ │          │
-│        └────────────────────────────────────┘          │
-└─────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🛠️ Tech Stack Deep Dive
-
-<table>
-<tr>
-<td width="50%">
-
-### 🎨 Frontend
-| Tech | Purpose |
-|:-----|:--------|
-| ⚡ Next.js 16 | App Router, SSR, API routes |
-| ⚛️ React 19 | UI components, hooks |
-| 🟦 TypeScript | Type safety everywhere |
-| 🎨 Tailwind CSS 4 | Utility-first styling |
-| 🟢 GSAP | Shake effects, entrance animations |
-| 🎞️ Framer Motion | Smooth transitions |
-| 🐻 Zustand | Lightweight state management |
-| 🎯 Lucide React | Beautiful icon system |
-
-</td>
-<td width="50%">
-
-### ⚙️ Backend
-| Tech | Purpose |
-|:-----|:--------|
-| 🍃 MongoDB | NoSQL document database |
-| 💎 Prisma ORM | Type-safe database queries |
-| 🔑 Jose (JWT) | Token creation & verification |
-| 🔒 Bcrypt.js | Password hashing (12 rounds) |
-| 🍪 httpOnly Cookies | Secure session management |
-| 🛡️ Middleware | Route protection & redirects |
-
-</td>
-</tr>
-</table>
+| Layer | Tech |
+|:------|:-----|
+| **Framework** | Next.js 16 (App Router) |
+| **Frontend** | React 19, TypeScript, Tailwind CSS 4, GSAP, Framer Motion, Zustand |
+| **Backend** | Next.js API Routes, Prisma ORM, MongoDB |
+| **Auth** | Jose (JWT) + Bcrypt.js, httpOnly Cookies |
+| **Icons** | Lucide React |
 
 ---
 
@@ -216,16 +154,6 @@ Then open **[http://localhost:3000](http://localhost:3000)** and start typing! �
 
 ## 🎮 How It Works
 
-```
-  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-  │  1. CHOOSE  │────▶│  2. TYPE    │────▶│  3. REVIEW  │
-  │             │     │             │     │             │
-  │ 🌐 Language │     │ ⌨️ Real-time │     │ 📊 WPM      │
-  │ 📶 Difficulty│     │ 🔴 Error    │     │ 🎯 Accuracy  │
-  │ ⏱️ Timer    │     │    feedback │     │ 🏆 Ranking   │
-  └─────────────┘     └─────────────┘     └─────────────┘
-```
-
 1. **Pick your settings** — language, difficulty, and time limit
 2. **Start typing** — just press any key. Correct chars glow green, errors flash red with a screen shake
 3. **See your results** — WPM, accuracy, CPM, and a performance rating. Scores auto-save for logged-in users
@@ -288,45 +216,13 @@ model TestResult {
 
 ---
 
-## 🎨 UI Showcase
+## 🎨 UI Highlights
 
-<table>
-<tr>
-<td align="center" width="50%">
-
-### 🏠 Typing Arena
-_Char-by-char rendering with live cursor_<br/>
-_Green glow on correct • Red shake on error_<br/>
-_Progress bar fills as you type_
-
-</td>
-<td align="center" width="50%">
-
-### 📊 Dashboard
-_WPM trend chart with color-coded bars_<br/>
-_Language breakdown with test counts_<br/>
-_Full test history table_
-
-</td>
-</tr>
-<tr>
-<td align="center">
-
-### 🎉 Post-Test Modal
-_Performance rating system:_<br/>
-🥉 Good → 🥈 Great → 🥇 Excellent → 👑 Legendary
-
-</td>
-<td align="center">
-
-### 🏆 Leaderboard
-_Top 20 global scores_<br/>
-_Medal system: 🥇🥈🥉_<br/>
-_Language + difficulty badges_
-
-</td>
-</tr>
-</table>
+- **Typing Arena** — Char-by-char rendering with live cursor, green glow on correct, red shake on error
+- **Metrics HUD** — Live WPM, accuracy, and error count updating in real-time
+- **Post-Test Modal** — Performance ratings: 🥉 Good → 🥈 Great → 🥇 Excellent → 👑 Legendary
+- **Dashboard** — WPM trend chart, language breakdown, full test history
+- **Leaderboard** — Top 20 global scores with medal system 🥇🥈🥉
 
 ---
 
@@ -369,6 +265,6 @@ _"The fastest way to type code... is to practice typing code."_
 
 <br/>
 
-[🌐 Live Demo](https://dev-type.vercel.app) · [🐛 Report Bug](https://github.com/yash23082007/dev-type/issues) · [💡 Request Feature](https://github.com/yash23082007/dev-type/issues)
+[🌐 Live Demo](https://dev-type-self.vercel.app) · [🐛 Report Bug](https://github.com/yash23082007/dev-type/issues) · [💡 Request Feature](https://github.com/yash23082007/dev-type/issues)
 
 </div>
