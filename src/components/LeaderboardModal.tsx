@@ -25,19 +25,28 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        if (isOpen) {
-            setLoading(true)
-            fetch('/api/scores')
-                .then(res => res.json())
-                .then(data => {
+        let isMounted = true
+
+        const fetchLeaderboard = async () => {
+            try {
+                const res = await fetch('/api/scores')
+                const data = await res.json()
+                if (isMounted) {
                     setLeaderboard(Array.isArray(data) ? data : [])
                     setLoading(false)
-                })
-                .catch(err => {
-                    console.error("Failed to fetch leaderboard", err)
+                }
+            } catch (err) {
+                console.error("Failed to fetch leaderboard", err)
+                if (isMounted) {
                     setLeaderboard([])
                     setLoading(false)
-                })
+                }
+            }
+        }
+
+        if (isOpen) {
+            setLoading(true)
+            fetchLeaderboard()
         }
     }, [isOpen])
 

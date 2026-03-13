@@ -7,8 +7,10 @@ import Link from 'next/link'
 import {
   TerminalIcon, BarChart3Icon, TrophyIcon, TargetIcon,
   ZapIcon, ClockIcon, ArrowLeftIcon, LogOutIcon,
-  CodeIcon, TypeIcon, Loader2Icon
+  CodeIcon, TypeIcon, Loader2Icon, Settings2Icon, FlameIcon, KeyboardIcon
 } from 'lucide-react'
+import { AIGenerator } from '@/components/AIGenerator'
+import { CustomPaster } from '@/components/CustomPaster'
 
 interface DashboardData {
   stats: {
@@ -16,6 +18,7 @@ interface DashboardData {
     avgWpm: number
     avgAccuracy: number
     bestWpm: number
+    streak: number
   }
   languageBreakdown: { language: string; count: number; avgWpm: number }[]
   difficultyBreakdown: { difficulty: string; count: number; avgWpm: number }[]
@@ -24,6 +27,7 @@ interface DashboardData {
     id: string; wpm: number; cpm: number; accuracy: number;
     language: string; difficulty: string; timeTaken: number; date: string
   }[]
+  heatmap: Record<string, number>
 }
 
 const LANG_COLORS: Record<string, string> = {
@@ -111,10 +115,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <StatCard icon={<FlameIcon className="w-5 h-5" />} label="Streak" value={`${data?.stats.streak ?? 0} Days`} color="text-orange-400" />
           <StatCard icon={<ZapIcon className="w-5 h-5" />} label="Best WPM" value={data?.stats.bestWpm ?? 0} color="text-primary" />
           <StatCard icon={<BarChart3Icon className="w-5 h-5" />} label="Avg WPM" value={data?.stats.avgWpm ?? 0} color="text-white" />
-          <StatCard icon={<TargetIcon className="w-5 h-5" />} label="Avg Accuracy" value={`${data?.stats.avgAccuracy ?? 0}%`} color="text-secondary" />
+          <StatCard icon={<TargetIcon className="w-5 h-5" />} label="Accuracy" value={`${data?.stats.avgAccuracy ?? 0}%`} color="text-secondary" />
           <StatCard icon={<TrophyIcon className="w-5 h-5" />} label="Total Tests" value={data?.stats.totalTests ?? 0} color="text-yellow-400" />
         </div>
 
@@ -178,6 +183,49 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Heatmap Section */}
+        <div className="glass-panel p-6 border border-white/10 mb-8">
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <KeyboardIcon className="w-5 h-5 text-error" />
+                Most Mistyped Keys
+            </h3>
+            {data && data.heatmap && Object.keys(data.heatmap).length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {Object.entries(data.heatmap).sort((a,b) => b[1] - a[1]).slice(0, 5).map(([char, count]) => (
+                      <div key={char} className="flex items-center gap-4">
+                          <span className="w-8 font-mono text-white text-center bg-surface border border-white/10 rounded-md py-1">{char === ' ' ? 'SPC' : char}</span>
+                          <div className="flex-1 h-3 bg-surface rounded-full overflow-hidden">
+                              <div className="h-full bg-error rounded-full transition-all" style={{ width: `${Math.min(100, (count / 20) * 100)}%` }}></div>
+                          </div>
+                          <span className="text-xs text-neutral w-6 text-right font-mono">{count}</span>
+                      </div>
+                  ))}
+                </div>
+            ) : (
+                <div className="text-neutral text-sm h-12 flex items-center justify-center">No mistakes recorded yet.</div>
+            )}
+        </div>
+
+        {/* Practice Modes */}
+        <div className="mb-8">
+            <h3 className="text-xl font-black text-white mb-4 flex items-center gap-2">
+                <Settings2Icon className="w-5 h-5 text-secondary" />
+                Advanced Practice Modes
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <AIGenerator />
+                <CustomPaster />
+            </div>
+            <div className="mt-4 flex justify-end gap-3">
+                <Link href="/shortcuts" className="bg-surface text-white border border-white/10 px-6 py-2 rounded-lg font-bold tracking-widest uppercase hover:bg-surface-light hover:border-white/30 transition-colors">
+                    Shortcut Master ⌨️
+                </Link>
+                <Link href="/" className="bg-primary text-background px-6 py-2 rounded-lg font-bold tracking-widest uppercase hover:bg-primary/90 transition-colors">
+                    Start Custom Test →
+                </Link>
+            </div>
         </div>
 
         {/* Recent Tests */}

@@ -51,7 +51,6 @@ export function TypingArena() {
             // Error shake animation
             const currentState = useTypingStore.getState()
             if (e.key.length === 1) {
-                const chars = currentState.snippet.split('')
                 const prevIndex = currentState.inputCharIndex - 1
                 if (prevIndex >= 0 && currentState.errors.includes(prevIndex)) {
                     if (containerRef.current) {
@@ -96,7 +95,7 @@ export function TypingArena() {
             <div className="glass-panel p-8 md:p-12 animate-shimmer">
                 <div className="flex flex-wrap gap-2">
                     {Array.from({ length: 20 }).map((_, i) => (
-                        <div key={i} className="h-6 bg-white/5 rounded" style={{ width: `${Math.random() * 60 + 30}px` }}></div>
+                        <div key={i} className="h-6 bg-white/5 rounded" style={{ width: `${(i * 13 % 60) + 30}px` }}></div>
                     ))}
                 </div>
             </div>

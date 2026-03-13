@@ -7,6 +7,27 @@ export async function GET(request: Request) {
         const language = searchParams.get('language') || 'javascript'
         const difficulty = searchParams.get('difficulty') || 'intermediate'
         
+        if (difficulty === 'algorithm') {
+            const algoSnippets = [
+                {
+                    id: "algo-twosum",
+                    content: "function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}",
+                    language: "javascript",
+                    difficulty: "algorithm",
+                    category: "leetcode"
+                },
+                {
+                    id: "algo-binarysearch",
+                    content: "function search(nums, target) {\n  let left = 0;\n  let right = nums.length - 1;\n  while (left <= right) {\n    let mid = Math.floor((left + right) / 2);\n    if (nums[mid] === target) return mid;\n    if (nums[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}",
+                    language: "javascript",
+                    difficulty: "algorithm",
+                    category: "leetcode"
+                }
+            ]
+            const randomIndex = Math.floor(Math.random() * algoSnippets.length)
+            return NextResponse.json(algoSnippets[randomIndex], { status: 200 })
+        }
+
         const snippets = await prisma.snippet.findMany({
             where: {
                 language,

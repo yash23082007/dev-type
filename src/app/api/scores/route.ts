@@ -57,6 +57,24 @@ export async function POST(request: Request) {
             const newAvgWpm = ((user.avgWpm * user.totalTests) + wpm) / newTotalTests
             const newAvgAccuracy = ((user.avgAccuracy * user.totalTests) + accuracy) / newTotalTests
 
+            let newStreak = user.streak
+            if (user.lastTestDate) {
+                const lastDate = new Date(user.lastTestDate)
+                const today = new Date()
+                
+                // Compare just the dates
+                const isConsecutive = (today.setHours(0,0,0,0) - lastDate.setHours(0,0,0,0)) === 86400000
+                const isSameDay = (today.setHours(0,0,0,0) === lastDate.setHours(0,0,0,0))
+
+                if (isConsecutive) {
+                    newStreak += 1
+                } else if (!isSameDay) {
+                    newStreak = 1
+                }
+            } else {
+                newStreak = 1
+            }
+
             await prisma.user.update({
                 where: { id: userId },
                 data: {
@@ -65,6 +83,7 @@ export async function POST(request: Request) {
                     avgWpm: newAvgWpm,
                     avgAccuracy: newAvgAccuracy,
                     lastTestDate: new Date(),
+                    streak: newStreak
                 }
             })
         }

@@ -21,6 +21,7 @@ model User {
   streak         Int           @default(0)
   lastTestDate   DateTime?
   testResults    TestResult[]
+  customSnippets CustomSnippet[]
   createdAt      DateTime      @default(now())
 }
 
@@ -30,6 +31,16 @@ model Snippet {
   language    String   
   difficulty  String   
   category    String   
+}
+
+model CustomSnippet {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  content   String
+  language  String
+  title     String?
+  createdAt DateTime @default(now())
 }
 
 model TestResult {

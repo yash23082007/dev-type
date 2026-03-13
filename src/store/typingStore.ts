@@ -2,6 +2,12 @@ import { create } from 'zustand'
 
 export type TestStatus = 'idle' | 'running' | 'finished'
 
+export interface Keystroke {
+    key: string
+    time: number
+    isError: boolean
+}
+
 interface TypingState {
     // Test Configuration
     language: string
@@ -10,6 +16,13 @@ interface TypingState {
     setLanguage: (lang: string) => void
     setDifficulty: (diff: string) => void
     setTimeLimit: (limit: number) => void
+    // Phase 1: Editor & Experience
+    theme: string
+    vsCodeMode: boolean
+    soundEnabled: boolean
+    setTheme: (theme: string) => void
+    setVsCodeMode: (enabled: boolean) => void
+    setSoundEnabled: (enabled: boolean) => void
 
     // Active Test State
     status: TestStatus
@@ -19,9 +32,11 @@ interface TypingState {
     errors: number[]
     startTime: number | null
     timeRemaining: number
+    keystrokes: Keystroke[]
 
     // Actions
     fetchSnippet: () => Promise<void>
+    setCustomSnippet: (content: string, lang: string) => void
     startTest: () => void
     endTest: () => void
     resetTest: () => void
@@ -39,6 +54,10 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     difficulty: 'intermediate',
     timeLimit: 30,
 
+    theme: 'dracula',
+    vsCodeMode: false,
+    soundEnabled: true,
+
     status: 'idle',
     snippet: '',
     snippetId: null,
@@ -46,10 +65,14 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     errors: [],
     startTime: null,
     timeRemaining: 30,
+    keystrokes: [],
 
     setLanguage: (lang) => set({ language: lang }),
     setDifficulty: (diff) => set({ difficulty: diff }),
     setTimeLimit: (limit) => set({ timeLimit: limit, timeRemaining: limit }),
+    setTheme: (theme) => set({ theme }),
+    setVsCodeMode: (vsCodeMode) => set({ vsCodeMode }),
+    setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
 
     fetchSnippet: async () => {
         const { language, difficulty } = get()
@@ -69,17 +92,36 @@ export const useTypingStore = create<TypingState>((set, get) => ({
         }
     },
 
+    setCustomSnippet: (content, lang) => {
+        set({
+            snippet: content,
+            language: lang,
+            snippetId: null, // Custom snippets aren't global snippets
+            status: 'idle',
+            inputCharIndex: 0,
+            errors: [],
+            startTime: null,
+            timeRemaining: get().timeLimit,
+            keystrokes: []
+        })
+    },
+
     startTest: () => set({
         status: 'running',
         inputCharIndex: 0,
         errors: [],
         startTime: Date.now(),
-        timeRemaining: get().timeLimit
+        timeRemaining: get().timeLimit,
+        keystrokes: []
     }),
 
     endTest: () => {
         const state = get()
         set({ status: 'finished' })
+
+        if (state.soundEnabled) {
+            import('@/lib/sound').then(mod => mod.playSuccessSound())
+        }
 
         // Submit score
         if (state.snippetId && state.getWPM() > 0) {
@@ -109,6 +151,7 @@ export const useTypingStore = create<TypingState>((set, get) => ({
             errors: [],
             startTime: null,
             timeRemaining: state.timeLimit,
+            keystrokes: [],
             snippet: '',
             snippetId: null,
         }))
@@ -142,12 +185,15 @@ export const useTypingStore = create<TypingState>((set, get) => ({
         const currentIndex = get().inputCharIndex
         const currentErrors = get().errors
 
+        const offset = state.startTime ? Date.now() - state.startTime : 0
+
         // Allow backspace
         if (key === 'Backspace') {
-            set({
+            set(state => ({
                 inputCharIndex: Math.max(0, currentIndex - 1),
-                errors: currentErrors.filter((errIdx) => errIdx !== currentIndex - 1)
-            })
+                errors: currentErrors.filter((errIdx) => errIdx !== currentIndex - 1),
+                keystrokes: [...state.keystrokes, { key: 'Backspace', time: offset, isError: false }]
+            }))
             return
         }
 
@@ -157,12 +203,22 @@ export const useTypingStore = create<TypingState>((set, get) => ({
         const expectedChar = snippet[currentIndex]
 
         if (key === expectedChar) {
-            set({ inputCharIndex: currentIndex + 1 })
-        } else {
-            set({
+            if (state.soundEnabled) {
+                import('@/lib/sound').then(mod => mod.playKeySound())
+            }
+            set(state => ({ 
                 inputCharIndex: currentIndex + 1,
-                errors: [...currentErrors, currentIndex]
-            })
+                keystrokes: [...state.keystrokes, { key, time: offset, isError: false }]
+            }))
+        } else {
+            if (state.soundEnabled) {
+                import('@/lib/sound').then(mod => mod.playErrorSound())
+            }
+            set(state => ({
+                inputCharIndex: currentIndex + 1,
+                errors: [...currentErrors, currentIndex],
+                keystrokes: [...state.keystrokes, { key, time: offset, isError: true }]
+            }))
         }
 
         // End test if reached the end of the snippet

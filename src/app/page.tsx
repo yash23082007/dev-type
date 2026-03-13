@@ -7,9 +7,11 @@ import { TerminalIcon, Code2Icon, TrophyIcon, Settings2Icon, LayoutDashboardIcon
 import { useTypingStore } from "@/store/typingStore"
 import { useAuthStore } from "@/store/authStore"
 import { LeaderboardModal } from "@/components/LeaderboardModal"
+import { MonacoEditorTyping } from "@/components/MonacoEditorTyping"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { MonitorIcon, PaletteIcon, Volume2Icon, VolumeXIcon } from "lucide-react"
 
 const TIME_OPTIONS = [15, 30, 60, 120]
 
@@ -20,6 +22,13 @@ export default function Home() {
   const language = useTypingStore(state => state.language)
   const difficulty = useTypingStore(state => state.difficulty)
   const timeLimit = useTypingStore(state => state.timeLimit)
+  const theme = useTypingStore(state => state.theme)
+  const vsCodeMode = useTypingStore(state => state.vsCodeMode)
+  const soundEnabled = useTypingStore(state => state.soundEnabled)
+  const setTheme = useTypingStore(state => state.setTheme)
+  const setVsCodeMode = useTypingStore(state => state.setVsCodeMode)
+  const setSoundEnabled = useTypingStore(state => state.setSoundEnabled)
+
   const fetchSnippet = useTypingStore(state => state.fetchSnippet)
   const status = useTypingStore(state => state.status)
 
@@ -111,7 +120,7 @@ export default function Home() {
       <div className="flex-1 w-full max-w-5xl flex flex-col justify-center items-center mt-12">
         <MetricsHUD />
         <div className="w-full">
-          <TypingArena />
+          {vsCodeMode ? <MonacoEditorTyping /> : <TypingArena />}
         </div>
 
         <p className="mt-8 text-neutral/50 font-mono text-sm tracking-widest text-center">
@@ -148,6 +157,7 @@ export default function Home() {
               <option value="beginner">Beginner</option>
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced</option>
+              <option value="algorithm">LeetCode (Algorithm)</option>
             </select>
           </div>
 
@@ -169,6 +179,39 @@ export default function Home() {
               </button>
             ))}
           </div>
+
+          {/* Theme Selector pass-through */}
+          <div className="flex items-center gap-2 bg-surface px-3 py-2 rounded-lg border border-white/5">
+            <PaletteIcon className="w-4 h-4 text-neutral" />
+            <select 
+              value={theme} 
+              onChange={(e) => setTheme(e.target.value)}
+              className="bg-transparent text-sm font-mono text-white outline-none cursor-pointer"
+            >
+              <option value="dracula">Dracula</option>
+              <option value="nord">Nord</option>
+              <option value="monokai">Monokai</option>
+              <option value="onedark">One Dark</option>
+              <option value="githubdark">GitHub Dark</option>
+            </select>
+          </div>
+
+          {/* VS Code Mode Toggle */}
+          <button
+            onClick={() => setVsCodeMode(!vsCodeMode)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg border border-white/5 text-sm font-mono transition-colors ${vsCodeMode ? 'bg-primary/20 text-primary border-primary/30' : 'bg-surface text-neutral'}`}
+          >
+            <MonitorIcon className="w-4 h-4" />
+            VS Code Mode
+          </button>
+
+          {/* Sound Toggle */}
+          <button
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg border border-white/5 text-sm font-mono transition-colors ${soundEnabled ? 'bg-primary/20 text-primary border-primary/30' : 'bg-surface text-neutral'}`}
+          >
+            {soundEnabled ? <Volume2Icon className="w-4 h-4" /> : <VolumeXIcon className="w-4 h-4" />}
+          </button>
         </div>
       </div>
 
