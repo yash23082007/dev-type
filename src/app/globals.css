@@ -205,6 +205,22 @@ html, body {
   .glow-error {
     box-shadow: 0 0 20px rgba(255, 51, 102, 0.15), 0 0 60px rgba(255, 51, 102, 0.05);
   }
+  /* Typography for blog content */
+  .prose-invert {
+    @apply text-text-muted;
+  }
+  .prose-invert p {
+    @apply mb-6 leading-relaxed;
+  }
+  .prose-invert h3 {
+    @apply text-white font-black text-2xl mt-12 mb-6 tracking-tight uppercase;
+  }
+  .prose-invert ul {
+    @apply list-disc list-inside mb-6 space-y-2;
+  }
+  .prose-invert strong {
+    @apply text-white font-bold;
+  }
 }
 
 /* Animations */
