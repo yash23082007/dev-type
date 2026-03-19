@@ -105,7 +105,6 @@ export default function BlogPage() {
     if (viewingId && currentPost) {
         return (
             <main className="min-h-screen bg-background text-white">
-                <Navbar />
                 <div className="pt-32 pb-32 px-6 max-w-4xl mx-auto">
                     <button 
                         onClick={() => setViewingId(null)}
@@ -151,14 +150,12 @@ export default function BlogPage() {
                         </button>
                     </div>
                 </div>
-                <Footer />
             </main>
         )
     }
 
     return (
         <main className="min-h-screen bg-background text-white">
-            <Navbar />
             <div className="pt-32 pb-32 px-6 max-w-7xl mx-auto">
                 <div className="mb-20">
                     <h1 className="text-8xl font-black tracking-tighter mb-8 italic uppercase leading-[0.8]">THE<br />DEV LOG.</h1>
@@ -211,7 +208,6 @@ export default function BlogPage() {
                     ))}
                 </div>
             </div>
-            <Footer />
         </main>
     )
 }

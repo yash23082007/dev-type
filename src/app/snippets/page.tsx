@@ -127,7 +127,6 @@ export default function SnippetsPage() {
 
     return (
         <main className="min-h-screen bg-background text-white">
-            <Navbar />
             <div className="pt-32 pb-32 px-6 max-w-7xl mx-auto">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                     <div>
@@ -248,8 +247,6 @@ export default function SnippetsPage() {
                     </div>
                 </div>
             )}
-
-            <Footer />
         </main>
     )
 }

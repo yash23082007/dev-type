@@ -9,8 +9,6 @@ import { UsersIcon, EyeIcon, RocketIcon } from 'lucide-react'
 export default function AboutPage() {
     return (
         <main className="min-h-screen bg-background text-white">
-            <Navbar />
-            
             <div className="pt-24">
                 <AboutSection />
             </div>
@@ -72,8 +70,6 @@ export default function AboutPage() {
                     </div>
                 </div>
             </section>
-
-            <Footer />
         </main>
     )
 }

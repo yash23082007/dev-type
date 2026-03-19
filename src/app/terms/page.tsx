@@ -8,7 +8,6 @@ import { FileTextIcon } from 'lucide-react'
 export default function TermsPage() {
     return (
         <main className="min-h-screen bg-background text-white">
-            <Navbar />
             <div className="pt-32 pb-32 px-6 max-w-4xl mx-auto">
                 <div className="flex items-center gap-4 mb-8">
                     <FileTextIcon className="w-10 h-10 text-secondary" />
@@ -38,7 +37,6 @@ export default function TermsPage() {
                     </section>
                 </div>
             </div>
-            <Footer />
         </main>
     )
 }
