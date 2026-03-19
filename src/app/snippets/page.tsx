@@ -1,6 +1,8 @@
 "use client"
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useTypingStore } from '@/store/typingStore'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Code2Icon, SearchIcon, FilterIcon, ChevronRightIcon, XIcon, CopyIcon, CheckIcon } from 'lucide-react'
@@ -108,13 +110,19 @@ const useStore = create(
 ]
 
 export default function SnippetsPage() {
-    const [selectedSnippet, setSelectedSnippet] = useState<typeof SNIPPETS[0] | null>(null)
+    const router = useRouter()
+    const [selectedSnippet, setSelectedSnippet] = useState<any>(null)
     const [copied, setCopied] = useState(false)
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text)
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
+    }
+
+    const handlePractice = (snippet: any) => {
+        useTypingStore.getState().setCustomSnippet(snippet.code, snippet.lang)
+        router.push('/')
     }
 
     return (
@@ -229,7 +237,10 @@ export default function SnippetsPage() {
                                         <p className="font-bold text-white tracking-widest">{selectedSnippet.lines}</p>
                                     </div>
                                 </div>
-                                <button className="premium-button py-3 px-8 text-xs font-bold tracking-widest uppercase">
+                                <button 
+                                    onClick={() => handlePractice(selectedSnippet)}
+                                    className="premium-button py-3 px-8 text-xs font-bold tracking-widest uppercase"
+                                >
                                     PRACTICE THIS SNIPPET
                                 </button>
                             </div>

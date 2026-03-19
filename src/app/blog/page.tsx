@@ -1,6 +1,8 @@
 "use client"
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useTypingStore } from '@/store/typingStore'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { ZapIcon, ClockIcon, ArrowRightIcon, ArrowLeftIcon, Share2Icon, BookmarkIcon } from 'lucide-react'
@@ -13,6 +15,18 @@ const POSTS = [
         cat: "PERFORMANCE", 
         time: "15 MIN",
         excerpt: "We break down the exact configurations and muscle memory patterns used by top-tier engineers to maintain flow state throughout an 8-hour sprint.",
+        snippet: {
+            code: `set nocompatible
+filetype mb on
+syntax on
+set number
+set relativenumber
+set cursorline
+set expandtab
+set shiftwidth=4
+set softtabstop=4`,
+            lang: "VIM"
+        },
         content: `
             <p>Neovim is more than just a text editor; it's a productivity philosophy. For the elite developer, every millisecond spent reaching for a mouse is a millisecond lost from the flow state. Our latest research into high-efficiency workflows reveals that the most productive engineers share a few common traits in their Neovim setups.</p>
             
@@ -33,6 +47,17 @@ const POSTS = [
         cat: "PSYCHOLOGY", 
         time: "5 MIN",
         excerpt: "Why minimal UIs lead to 40% faster code execution in high-stakes environments.",
+        snippet: {
+            code: `const UI = {
+  sidebar: false,
+  minimap: false,
+  breadcrumbs: false,
+  status: true,
+  tooltips: false
+};
+Object.freeze(UI);`,
+            lang: "JS"
+        },
         content: `
             <p>Visual noise is the silent killer of concentration. Modern IDEs are cluttered with sidebars, status icons, and non-essential popups that constantly fight for your attention. In our benchmarks, developers using minimalist, keyboard-driven interfaces showed a 40% increase in deep work duration.</p>
             <h3 class="text-2xl font-black text-white mt-8 mb-4">Cognitive Load and Syntax</h3>
@@ -46,6 +71,17 @@ const POSTS = [
         cat: "ENGINEERING", 
         time: "12 MIN",
         excerpt: "Leveraging MyPy and Pydantic to bring architectural stability to rapid prototyping.",
+        snippet: {
+            code: `from pydantic import BaseModel, Field
+from typing import Optional
+
+class User(BaseModel):
+    id: int
+    name: str = Field(..., max_length=50)
+    email: str
+    is_active: bool = True`,
+            lang: "PY"
+        },
         content: `
             <p>Python's dynamic nature is a double-edged sword. While it allows for rapid iteration, it often leads to runtime surprises in production. Implementing static typing via MyPy and Pydantic transformed our deployment stability.</p>
             <h3 class="text-2xl font-black text-white mt-8 mb-4">The Pydantic Revolution</h3>
@@ -55,8 +91,16 @@ const POSTS = [
 ]
 
 export default function BlogPage() {
+    const router = useRouter()
     const [viewingId, setViewingId] = useState<number | null>(null)
     const currentPost = POSTS.find(p => p.id === viewingId)
+
+    const handlePractice = () => {
+        if (currentPost && currentPost.snippet) {
+            useTypingStore.getState().setCustomSnippet(currentPost.snippet.code, currentPost.snippet.lang)
+            router.push('/')
+        }
+    }
 
     if (viewingId && currentPost) {
         return (
@@ -99,7 +143,12 @@ export default function BlogPage() {
                     <div className="mt-20 p-12 glass-panel border border-white/10 text-center">
                         <h3 className="text-2xl font-black mb-4 italic tracking-widest">READY TO APPLY THESE TACTICS?</h3>
                         <p className="text-text-muted mb-8 max-w-xl mx-auto">Test your muscle memory against the code snippets discussed in this article and join the top 1% of efficient engineers.</p>
-                        <button className="premium-button py-4 px-10 text-sm font-black tracking-widest">START TRAINING NOW</button>
+                        <button 
+                            onClick={handlePractice}
+                            className="premium-button py-4 px-10 text-sm font-black tracking-widest uppercase"
+                        >
+                            START TRAINING NOW
+                        </button>
                     </div>
                 </div>
                 <Footer />

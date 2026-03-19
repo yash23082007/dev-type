@@ -20,10 +20,10 @@ export function TypingArena() {
     const progress = getProgress()
 
     useEffect(() => {
-        if (status === 'idle') {
+        if (status === 'idle' && !snippet) {
             fetchSnippet()
         }
-    }, [status, fetchSnippet])
+    }, [status, fetchSnippet, snippet])
 
     useEffect(() => {
         const handleGlobalKeydown = (e: KeyboardEvent) => {
