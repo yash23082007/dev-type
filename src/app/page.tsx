@@ -59,9 +59,9 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="w-full bg-background overflow-visible">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-24 px-6 flex flex-col items-center justify-center overflow-hidden border-b border-white/[0.04]">
+      <section className="relative pt-32 pb-24 px-6 flex flex-col items-center justify-center border-b border-white/[0.04]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,white/5,transparent)] -z-10"></div>
         
         <div className="w-full max-w-5xl space-y-12">

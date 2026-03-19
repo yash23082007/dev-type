@@ -34,7 +34,7 @@ export default function RootLayout({
         <ThemeProvider>
           <div className="noise-overlay" />
           <Navbar />
-          <div className="pt-20 min-h-screen">
+          <div className="pt-20">
             {children}
           </div>
           <Footer />

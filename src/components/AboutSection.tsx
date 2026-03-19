@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react'
 import { Code2Icon, ZapIcon, TargetIcon, LayersIcon } from 'lucide-react'
 
