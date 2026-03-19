@@ -175,8 +175,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About Section */}
-      <AboutSection />
+      <section className="relative z-0 bg-background overflow-visible">
+        <AboutSection />
+      </section>
 
       {/* Modals */}
       <PostTestModal />
