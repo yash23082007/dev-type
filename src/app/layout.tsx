@@ -18,6 +18,8 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from "../components/ThemeProvider";
+import { Navbar } from "../components/Navbar";
+import { Footer } from "../components/Footer";
 
 export default function RootLayout({
   children,
@@ -27,10 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-white/20`}
       >
         <ThemeProvider>
-          {children}
+          <div className="noise-overlay" />
+          <Navbar />
+          <div className="pt-20 min-h-screen">
+            {children}
+          </div>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

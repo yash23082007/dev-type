@@ -106,9 +106,9 @@ export function TypingArena() {
         <div className="relative">
             {/* Progress bar */}
             {status === 'running' && (
-                <div className="absolute -top-1 left-0 right-0 h-1 bg-surface rounded-full overflow-hidden">
+                <div className="absolute -top-1 left-0 right-0 h-0.5 bg-white/5 rounded-full overflow-hidden">
                     <div
-                        className="progress-bar h-full rounded-full"
+                        className="bg-white h-full transition-all duration-300 shadow-[0_0_10px_rgba(255,255,255,0.3)]"
                         style={{ width: `${progress}%` }}
                     ></div>
                 </div>
@@ -116,25 +116,25 @@ export function TypingArena() {
 
             <div
                 ref={containerRef}
-                className="glass-panel p-8 md:p-12 font-mono text-lg md:text-2xl tracking-wide leading-relaxed shadow-2xl relative outline-none"
+                className="glass-panel p-8 md:p-14 font-mono text-lg md:text-2xl tracking-normal leading-relaxed shadow-2xl relative outline-none border-white/[0.03]"
                 tabIndex={0}
             >
                 {/* Tab indicator */}
                 {tabPressed && (
-                    <div className="absolute top-3 right-4 text-xs font-mono text-primary animate-pulse">
+                    <div className="absolute top-4 right-6 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 animate-pulse">
                         press Enter to restart
                     </div>
                 )}
 
                 <div className="flex flex-wrap relative">
                     {snippet.split('').map((char, index) => {
-                        let colorClass = "text-[var(--color-text-neutral)]"
+                        let colorClass = "text-white/20"
 
                         if (index < inputCharIndex) {
                             if (errors.includes(index)) {
-                                colorClass = "text-red-500 bg-red-500/20 neon-text-error rounded-sm border-b-2 border-red-500"
+                                colorClass = "text-red-500 bg-red-500/10 rounded-sm"
                             } else {
-                                colorClass = "text-white neon-text-primary"
+                                colorClass = "text-white"
                             }
                         }
 
@@ -143,7 +143,7 @@ export function TypingArena() {
                         return (
                             <span key={index} className="relative">
                                 {isCurrentChar && status !== 'finished' && (
-                                    <span className="absolute left-0 bottom-0 w-full h-[3px] bg-primary animate-pulse-fast rounded-sm block" style={{ boxShadow: '0 0 8px rgba(0,255,157,0.6)' }}></span>
+                                    <span className="absolute left-0 bottom-[-2px] w-full h-[2px] bg-white animate-pulse rounded-sm block"></span>
                                 )}
                                 <span className={`transition-colors duration-100 ease-out select-none ${colorClass}`}>
                                     {char === " " ? "\u00A0" : char}

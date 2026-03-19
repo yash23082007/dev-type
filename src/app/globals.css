@@ -6,67 +6,79 @@
   --color-surface-light: var(--surface-light);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
   --color-error: var(--error);
-  --color-text-neutral: var(--text-neutral);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
   --color-text-typed: var(--text-typed);
 
-  --animate-pulse-fast: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @layer base {
   :root, [data-theme="dracula"] {
-    --bg: #282a36;
-    --surface: #44475a;
-    --surface-light: #6272a4;
-    --primary: #50fa7b;
-    --secondary: #bd93f9;
-    --error: #ff5555;
-    --text-neutral: #8be9fd;
-    --text-typed: #f8f8f2;
+    --bg: #050505;
+    --surface: #0f0f0f;
+    --surface-light: #1a1a1a;
+    --primary: #ffffff;
+    --secondary: #888888;
+    --accent: #ffffff;
+    --error: #ff4444;
+    --text-main: #ffffff;
+    --text-muted: #666666;
+    --text-typed: #ffffff;
   }
 
   [data-theme="nord"] {
-    --bg: #2e3440;
-    --surface: #3b4252;
-    --surface-light: #4c566a;
-    --primary: #8fbcbb;
-    --secondary: #88c0d0;
+    --bg: #090a0c;
+    --surface: #14161a;
+    --surface-light: #1c1f26;
+    --primary: #eceff4;
+    --secondary: #81a1c1;
+    --accent: #88c0d0;
     --error: #bf616a;
-    --text-neutral: #d8dee9;
+    --text-main: #e5e9f0;
+    --text-muted: #6b7a95;
     --text-typed: #eceff4;
   }
 
   [data-theme="monokai"] {
-    --bg: #272822;
-    --surface: #3e3d32;
-    --surface-light: #49483e;
-    --primary: #a6e22e;
-    --secondary: #fd971f;
+    --bg: #0a0a08;
+    --surface: #1a1915;
+    --surface-light: #262521;
+    --primary: #f8f8f2;
+    --secondary: #75715e;
+    --accent: #a6e22e;
     --error: #f92672;
-    --text-neutral: #75715e;
-    --text-typed: #f8f8f2;
+    --text-main: #f8f8f2;
+    --text-muted: #6e6a5b;
+    --text-typed: #ffffff;
   }
 
   [data-theme="onedark"] {
-    --bg: #282c34;
-    --surface: #3e4451;
-    --surface-light: #545862;
-    --primary: #98c379;
-    --secondary: #c678dd;
+    --bg: #08090a;
+    --surface: #121417;
+    --surface-light: #1b1e23;
+    --primary: #abb2bf;
+    --secondary: #5c6370;
+    --accent: #61afef;
     --error: #e06c75;
-    --text-neutral: #abb2bf;
-    --text-typed: #dcdfe4;
+    --text-main: #dcdfe4;
+    --text-muted: #545862;
+    --text-typed: #ffffff;
   }
 
   [data-theme="githubdark"] {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface-light: #21262d;
-    --primary: #2ea043;
-    --secondary: #79c0ff;
+    --bg: #010409;
+    --surface: #0d1117;
+    --surface-light: #161b22;
+    --primary: #c9d1d9;
+    --secondary: #8b949e;
+    --accent: #388bfd;
     --error: #f85149;
-    --text-neutral: #8b949e;
-    --text-typed: #c9d1d9;
+    --text-main: #c9d1d9;
+    --text-muted: #6e7681;
+    --text-typed: #ffffff;
   }
 }
 
@@ -98,8 +110,36 @@
 }
 
 @layer utilities {
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
   .glass-panel {
-    @apply bg-surface/60 backdrop-blur-xl border border-white/[0.06] rounded-xl;
+    @apply bg-surface/40 backdrop-blur-xl border border-white/[0.04] rounded-lg shadow-2xl;
+  }
+  
+  .premium-text-sharp {
+    @apply tracking-tight font-medium;
+  }
+
+  .premium-button {
+    @apply px-6 py-2 bg-white text-black text-sm font-bold tracking-tight rounded-md 
+           hover:bg-neutral-200 active:scale-[0.98] transition-all;
+  }
+
+  .premium-button-ghost {
+    @apply px-6 py-2 border border-white/10 text-white text-sm font-medium tracking-tight rounded-md
+           hover:bg-white/5 active:scale-[0.98] transition-all;
+  }
+
+  .premium-input {
+    @apply bg-white/[0.03] border border-white/[0.08] rounded-md px-4 py-2 text-sm text-white
+           focus:outline-none focus:border-white/20 transition-colors;
   }
   
   .neon-text-primary {

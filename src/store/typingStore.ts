@@ -20,9 +20,11 @@ interface TypingState {
     theme: string
     vsCodeMode: boolean
     soundEnabled: boolean
+    isLeaderboardOpen: boolean
     setTheme: (theme: string) => void
     setVsCodeMode: (enabled: boolean) => void
     setSoundEnabled: (enabled: boolean) => void
+    setIsLeaderboardOpen: (open: boolean) => void
 
     // Active Test State
     status: TestStatus
@@ -66,6 +68,7 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     startTime: null,
     timeRemaining: 30,
     keystrokes: [],
+    isLeaderboardOpen: false,
 
     setLanguage: (lang) => set({ language: lang }),
     setDifficulty: (diff) => set({ difficulty: diff }),
@@ -73,6 +76,7 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     setTheme: (theme) => set({ theme }),
     setVsCodeMode: (vsCodeMode) => set({ vsCodeMode }),
     setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
+    setIsLeaderboardOpen: (isLeaderboardOpen) => set({ isLeaderboardOpen }),
 
     fetchSnippet: async () => {
         const { language, difficulty } = get()

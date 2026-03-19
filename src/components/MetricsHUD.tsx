@@ -42,35 +42,35 @@ export function MetricsHUD() {
         <div ref={containerRef} className="flex flex-row gap-6 mb-8 justify-between items-end w-full max-w-4xl mx-auto">
             <div className="flex gap-6 md:gap-8">
                 <div className="flex flex-col">
-                    <span className="text-secondary text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1">WPM</span>
-                    <span className={`text-4xl md:text-5xl font-black ${isRunning ? 'neon-text-primary text-white' : 'text-neutral/30'}`}>
+                    <span className="text-secondary text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase mb-1 opacity-60">WPM</span>
+                    <span className={`text-4xl md:text-5xl font-black tracking-tighter ${isRunning ? 'text-white' : 'text-white/10'}`}>
                         {isRunning ? wpm : '--'}
                     </span>
                 </div>
 
                 <div className="flex flex-col">
-                    <span className="text-secondary text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1">ACC</span>
-                    <span className={`text-4xl md:text-5xl font-black ${isRunning ? 'text-white' : 'text-neutral/30'}`}>
+                    <span className="text-secondary text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase mb-1 opacity-60">ACC</span>
+                    <span className={`text-4xl md:text-5xl font-black tracking-tighter ${isRunning ? 'text-white' : 'text-white/10'}`}>
                         {isRunning ? `${accuracy}%` : '--%'}
                     </span>
                 </div>
 
                 <div className="flex flex-col">
-                    <span className="text-secondary text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1">Errors</span>
-                    <span className={`text-4xl md:text-5xl font-black ${errors.length > 0 ? 'text-error neon-text-error' : isRunning ? 'text-white' : 'text-neutral/30'}`}>
+                    <span className="text-secondary text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase mb-1 opacity-60">Errors</span>
+                    <span className={`text-4xl md:text-5xl font-black tracking-tighter ${errors.length > 0 ? 'text-error' : isRunning ? 'text-white' : 'text-white/10'}`}>
                         {isRunning ? errors.length : '--'}
                     </span>
                 </div>
             </div>
 
             <div className="flex flex-col items-end">
-                <span className="text-secondary text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1">Time</span>
-                <span className={`text-3xl md:text-4xl font-black tabular-nums ${
+                <span className="text-secondary text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase mb-1 opacity-60">Time</span>
+                <span className={`text-3xl md:text-4xl font-black tabular-nums tracking-tighter ${
                     isRunning && timeRemaining <= 10 
-                        ? 'text-error neon-text-error animate-pulse' 
+                        ? 'text-error animate-pulse' 
                         : isRunning 
-                            ? 'text-neutral' 
-                            : 'text-neutral/30'
+                            ? 'text-white' 
+                            : 'text-white/10'
                 }`}>
                     {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, '0')}
                 </span>

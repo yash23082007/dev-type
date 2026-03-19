@@ -25,22 +25,23 @@ export function MonacoEditorTyping() {
     // and rely on the same global key listener in `page.tsx` or `TypingArena`.
 
     return (
-        <div className="glass-panel p-4 h-[400px] overflow-hidden rounded-xl border border-white/10">
+        <div className="glass-panel p-6 h-[400px] overflow-hidden rounded-lg border border-white/[0.04] bg-[#050505]">
              <Editor
                 height="100%"
                 defaultLanguage={language}
                 language={language}
-                theme={getMonacoTheme()}
+                theme="vs-dark"
                 value={snippet.slice(0, inputCharIndex) + '█\n\n' + snippet}
                 options={{
                     readOnly: true,
                     minimap: { enabled: false },
-                    fontSize: 16,
+                    fontSize: 15,
                     lineNumbers: 'on',
                     wordWrap: 'on',
                     cursorBlinking: 'smooth',
                     guides: { indentation: true },
                     scrollBeyondLastLine: false,
+                    padding: { top: 20, bottom: 20 },
                 }}
             />
         </div>
