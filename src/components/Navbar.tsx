@@ -1,20 +1,23 @@
+"use client"
+
 import React from 'react'
 import Link from 'next/link'
 import { TerminalIcon, UserIcon, LogOutIcon, LayoutDashboardIcon, TrophyIcon } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
-import { useRouter } from 'next/navigation'
 import { useTypingStore } from '@/store/typingStore'
 
 export function Navbar() {
     const user = useAuthStore(state => state.user)
     const logout = useAuthStore(state => state.logout)
     const authLoading = useAuthStore(state => state.loading)
-    const setIsLeaderboardOpen = useTypingStore(state => state.setIsLeaderboardOpen)
-    const router = useRouter()
-
+    
     const handleLogout = async () => {
         await logout()
-        router.refresh()
+        window.location.reload()
+    }
+
+    const openLeaderboard = () => {
+        useTypingStore.getState().setIsLeaderboardOpen(true)
     }
 
     return (
@@ -36,7 +39,7 @@ export function Navbar() {
                         Practice
                     </Link>
                     <button 
-                        onClick={() => setIsLeaderboardOpen(true)}
+                        onClick={openLeaderboard}
                         className="text-sm font-medium text-text-muted hover:text-white transition-colors flex items-center gap-1.5"
                     >
                         <TrophyIcon className="w-4 h-4" /> Leaderboard

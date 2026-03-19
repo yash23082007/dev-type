@@ -25,7 +25,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        let isMounted = true
+        const isMounted = true
 
         const fetchLeaderboard = async () => {
             try {

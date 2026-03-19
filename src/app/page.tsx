@@ -1,18 +1,15 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { TypingArena } from "@/components/TypingArena"
 import { MetricsHUD } from "@/components/MetricsHUD"
 import { PostTestModal } from "@/components/PostTestModal"
-import { TerminalIcon, Code2Icon, TrophyIcon, Settings2Icon, LayoutDashboardIcon, LogInIcon, LogOutIcon, UserIcon, TimerIcon } from "lucide-react"
+import { Settings2Icon, TimerIcon, MonitorIcon, PaletteIcon, Volume2Icon, VolumeXIcon } from "lucide-react"
 import { useTypingStore } from "@/store/typingStore"
 import { useAuthStore } from "@/store/authStore"
 import { LeaderboardModal } from "@/components/LeaderboardModal"
 import { MonacoEditorTyping } from "@/components/MonacoEditorTyping"
-import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { MonitorIcon, PaletteIcon, Volume2Icon, VolumeXIcon } from "lucide-react"
-
 import { AboutSection } from "@/components/AboutSection"
 
 const TIME_OPTIONS = [15, 30, 60, 120]
@@ -37,7 +34,6 @@ export default function Home() {
   const setIsLeaderboardOpen = useTypingStore(state => state.setIsLeaderboardOpen)
 
   const fetchUser = useAuthStore(state => state.fetchUser)
-  const router = useRouter()
 
   useEffect(() => {
     fetchUser()
