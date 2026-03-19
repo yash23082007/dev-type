@@ -59,8 +59,8 @@ export function Footer() {
                     <div className="space-y-6">
                         <h4 className="text-xs font-bold uppercase tracking-widest text-white">Legal</h4>
                         <ul className="space-y-4">
-                            <li><Link href="/" className="text-sm text-text-muted hover:text-white transition-colors">Privacy Policy</Link></li>
-                            <li><Link href="/" className="text-sm text-text-muted hover:text-white transition-colors">Terms of Service</Link></li>
+                            <li><Link href="/privacy" className="text-sm text-text-muted hover:text-white transition-colors">Privacy Policy</Link></li>
+                            <li><Link href="/terms" className="text-sm text-text-muted hover:text-white transition-colors">Terms of Service</Link></li>
                         </ul>
                     </div>
                 </div>
@@ -70,7 +70,7 @@ export function Footer() {
                         © {new Date().getFullYear()} DEVTYPE. CRAFTED FOR THE MODERN ENGINEER.
                     </p>
                     <div className="flex items-center gap-6 text-xs font-mono text-text-muted">
-                        <span>EST. 2024</span>
+                        <span>EST. 2026</span>
                         <div className="w-1 h-1 bg-white/20 rounded-full"></div>
                         <span className="text-secondary/60">V1.0.4</span>
                     </div>
