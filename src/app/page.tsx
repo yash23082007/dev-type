@@ -10,7 +10,6 @@ import { useAuthStore } from "@/store/authStore"
 import { LeaderboardModal } from "@/components/LeaderboardModal"
 import { MonacoEditorTyping } from "@/components/MonacoEditorTyping"
 import Link from "next/link"
-import { AboutSection } from "@/components/AboutSection"
 
 const TIME_OPTIONS = [15, 30, 60, 120]
 
@@ -171,9 +170,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative z-0 bg-background overflow-visible">
-        <AboutSection />
-      </section>
 
       {/* Modals */}
       <PostTestModal />

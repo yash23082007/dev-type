@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Code2Icon, ZapIcon, TargetIcon, LayersIcon } from 'lucide-react'
+import Link from 'next/link'
 
 export function AboutSection() {
     return (
@@ -24,6 +25,12 @@ export function AboutSection() {
                         <p className="text-xl text-text-muted leading-relaxed font-medium">
                             DevType isn't just a typing test. It's a high-performance environment designed to bridge the gap between thought and code. We use real-world production snippets to train your muscle memory for the syntax that matters.
                         </p>
+
+                        <div className="flex pt-4">
+                            <Link href="/" className="premium-button py-4 px-10 text-lg font-black tracking-widest transition-all hover:scale-105">
+                                START TRAINING
+                            </Link>
+                        </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                             <div className="space-y-4 pt-8 border-t border-white/5">

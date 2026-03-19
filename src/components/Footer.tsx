@@ -43,16 +43,16 @@ export function Footer() {
                         <ul className="space-y-4">
                             <li><Link href="/" className="text-sm text-text-muted hover:text-white transition-colors">Practice</Link></li>
                             <li><button onClick={() => useTypingStore.getState().setIsLeaderboardOpen(true)} className="text-sm text-text-muted hover:text-white transition-colors text-left w-full">Leaderboard</button></li>
-                            <li><Link href="/" className="text-sm text-text-muted hover:text-white transition-colors">Explore Snippets</Link></li>
+                            <li><Link href="/snippets" className="text-sm text-text-muted hover:text-white transition-colors">Explore Snippets</Link></li>
                         </ul>
                     </div>
 
                     <div className="space-y-6">
                         <h4 className="text-xs font-bold uppercase tracking-widest text-white">Resources</h4>
                         <ul className="space-y-4">
-                            <li><Link href="/#about" className="text-sm text-text-muted hover:text-white transition-colors">About Us</Link></li>
+                            <li><Link href="/about" className="text-sm text-text-muted hover:text-white transition-colors">About Us</Link></li>
                             <li><Link href="/shortcuts" className="text-sm text-text-muted hover:text-white transition-colors">Shortcuts</Link></li>
-                            <li><Link href="/" className="text-sm text-text-muted hover:text-white transition-colors">Dev Blog</Link></li>
+                            <li><Link href="/blog" className="text-sm text-text-muted hover:text-white transition-colors">Dev Blog</Link></li>
                         </ul>
                     </div>
 

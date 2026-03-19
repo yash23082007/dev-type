@@ -38,6 +38,9 @@ export function Navbar() {
                     <Link href="/" className="text-sm font-medium text-text-muted hover:text-white transition-colors">
                         Practice
                     </Link>
+                    <Link href="/about" className="text-sm font-medium text-text-muted hover:text-white transition-colors">
+                        About
+                    </Link>
                     <button 
                         onClick={openLeaderboard}
                         className="text-sm font-medium text-text-muted hover:text-white transition-colors flex items-center gap-1.5"
