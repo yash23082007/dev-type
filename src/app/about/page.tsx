@@ -54,22 +54,19 @@ export default function AboutPage() {
             <section className="py-32">
                 <div className="max-w-7xl mx-auto px-6 text-center">
                     <h2 className="text-4xl font-black mb-16 tracking-tighter">BORN IN THE TERMINAL.</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div className="flex justify-center">
                         {[
                             { name: "Yash Vijay", role: "Elite Architect", tag: "CORE" },
-                            { name: "Alex Chen", role: "Performance Lead", tag: "ENG" },
-                            { name: "Sarah Miller", role: "Design Systems", tag: "UI" },
-                            { name: "David Kim", role: "Backend Guru", tag: "SYS" }
                         ].map((member, i) => (
-                            <div key={i} className="glass-panel p-8 border border-white/5 group hover:border-primary/20 transition-all">
-                                <div className="w-16 h-16 bg-white/5 rounded-full mx-auto mb-6 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                                    <span className="text-xl font-black text-white/40 group-hover:text-primary transition-colors">
-                                        {member.name.split(' ').map(n=>n[0]).join('')}
+                            <div key={i} className="glass-panel p-10 border border-white/5 group hover:border-primary/20 transition-all max-w-sm w-full">
+                                <div className="w-24 h-24 bg-white/5 rounded-full mx-auto mb-8 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                                    <span className="text-3xl font-black text-white/40 group-hover:text-primary transition-colors">
+                                        YV
                                     </span>
                                 </div>
-                                <h4 className="text-lg font-bold mb-1">{member.name}</h4>
-                                <p className="text-sm text-text-muted mb-4 uppercase tracking-widest text-[10px]">{member.role}</p>
-                                <span className="px-3 py-1 bg-white/5 rounded-full text-[9px] font-mono text-secondary tracking-widest">{member.tag}</span>
+                                <h4 className="text-2xl font-black mb-2 tracking-tight">{member.name}</h4>
+                                <p className="text-sm text-text-muted mb-6 uppercase tracking-widest text-[10px]">{member.role}</p>
+                                <span className="px-4 py-1.5 bg-white/5 rounded-full text-[10px] font-mono text-secondary tracking-widest">{member.tag}</span>
                             </div>
                         ))}
                     </div>
