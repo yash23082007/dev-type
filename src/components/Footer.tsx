@@ -1,6 +1,9 @@
+"use client"
+
 import React from 'react'
 import Link from 'next/link'
-import { TerminalIcon, GithubIcon, TwitterIcon, MailIcon } from 'lucide-react'
+import { TerminalIcon, GithubIcon, LinkedinIcon, InstagramIcon, MailIcon } from 'lucide-react'
+import { useTypingStore } from '@/store/typingStore'
 
 export function Footer() {
     return (
@@ -19,13 +22,16 @@ export function Footer() {
                             The ultimate typing platform for developers. Master your syntax speed and conquer the keyboard with real code snippets.
                         </p>
                         <div className="flex items-center gap-4 pt-2">
-                            <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
+                            <a href="https://github.com/yash23082007" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
                                 <GithubIcon className="w-4 h-4 text-white" />
                             </a>
-                            <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
-                                <TwitterIcon className="w-4 h-4 text-white" />
+                            <a href="https://www.linkedin.com/in/yash-vijay-b0a75937a" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
+                                <LinkedinIcon className="w-4 h-4 text-white" />
                             </a>
-                            <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
+                            <a href="https://www.instagram.com/yash_vj23" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
+                                <InstagramIcon className="w-4 h-4 text-white" />
+                            </a>
+                            <a href="mailto:ktanayash@gmail.com" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
                                 <MailIcon className="w-4 h-4 text-white" />
                             </a>
                         </div>
@@ -36,25 +42,25 @@ export function Footer() {
                         <h4 className="text-xs font-bold uppercase tracking-widest text-white">Platform</h4>
                         <ul className="space-y-4">
                             <li><Link href="/" className="text-sm text-text-muted hover:text-white transition-colors">Practice</Link></li>
-                            <li><Link href="/leaderboard" className="text-sm text-text-muted hover:text-white transition-colors">Leaderboard</Link></li>
-                            <li><Link href="/snippets" className="text-sm text-text-muted hover:text-white transition-colors">Explore Snippets</Link></li>
+                            <li><button onClick={() => useTypingStore.getState().setIsLeaderboardOpen(true)} className="text-sm text-text-muted hover:text-white transition-colors text-left w-full">Leaderboard</button></li>
+                            <li><Link href="/" className="text-sm text-text-muted hover:text-white transition-colors">Explore Snippets</Link></li>
                         </ul>
                     </div>
 
                     <div className="space-y-6">
                         <h4 className="text-xs font-bold uppercase tracking-widest text-white">Resources</h4>
                         <ul className="space-y-4">
-                            <li><Link href="/about" className="text-sm text-text-muted hover:text-white transition-colors">About Us</Link></li>
+                            <li><Link href="/#about" className="text-sm text-text-muted hover:text-white transition-colors">About Us</Link></li>
                             <li><Link href="/shortcuts" className="text-sm text-text-muted hover:text-white transition-colors">Shortcuts</Link></li>
-                            <li><Link href="/blog" className="text-sm text-text-muted hover:text-white transition-colors">Dev Blog</Link></li>
+                            <li><Link href="/" className="text-sm text-text-muted hover:text-white transition-colors">Dev Blog</Link></li>
                         </ul>
                     </div>
 
                     <div className="space-y-6">
                         <h4 className="text-xs font-bold uppercase tracking-widest text-white">Legal</h4>
                         <ul className="space-y-4">
-                            <li><Link href="/privacy" className="text-sm text-text-muted hover:text-white transition-colors">Privacy Policy</Link></li>
-                            <li><Link href="/terms" className="text-sm text-text-muted hover:text-white transition-colors">Terms of Service</Link></li>
+                            <li><Link href="/" className="text-sm text-text-muted hover:text-white transition-colors">Privacy Policy</Link></li>
+                            <li><Link href="/" className="text-sm text-text-muted hover:text-white transition-colors">Terms of Service</Link></li>
                         </ul>
                     </div>
                 </div>
