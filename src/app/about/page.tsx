@@ -16,6 +16,16 @@ export default function AboutPage() {
             {/* Vision Section */}
             <section className="py-20 bg-white/[0.02]">
                 <div className="max-w-7xl mx-auto px-6">
+                    <div className="flex flex-col items-center mb-6">
+                        <span className="text-[10px] font-black tracking-[0.5em] text-white/20 uppercase mb-4 animate-pulse">EST. 2026</span>
+                        <div className="w-16 h-1 bg-white/10 rounded-full mb-12">
+                            <div className="w-1/2 h-full bg-white rounded-full"></div>
+                        </div>
+                    </div>
+                    <h2 className="text-7xl font-black text-white italic tracking-tighter mb-8 leading-[0.8] uppercase text-center">
+                        BORN IN THE<br />
+                        <span className="text-white/40">TERMINAL.</span>
+                    </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                         <div className="space-y-4">
                             <div className="p-3 bg-primary/10 rounded-xl w-fit">

@@ -11,15 +11,24 @@ export function Footer() {
             <div className="max-w-7xl mx-auto px-6">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
                     {/* Brand Column */}
-                    <div className="md:col-span-1 space-y-6">
-                        <Link href="/" className="flex items-center gap-2">
-                            <div className="w-6 h-6 bg-white flex items-center justify-center rounded-sm">
-                                <TerminalIcon className="w-4 h-4 text-black" />
+                    <div className="md:col-span-1">
+                        <Link href="/" className="flex items-center gap-3 group mb-6">
+                            <div className="relative w-8 h-8 flex items-center justify-center overflow-hidden">
+                                <div className="absolute inset-0 bg-white/5 group-hover:bg-white/10 transition-colors rounded-lg"></div>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10 transition-transform duration-500 group-hover:rotate-[360deg]">
+                                    <path d="M4 17L10 11L4 5" stroke="white" strokeWidth="4" strokeLinecap="square" />
+                                    <rect x="12" y="15" width="8" height="3" fill="white" />
+                                </svg>
                             </div>
-                            <span className="text-lg font-black tracking-tighter text-white">DEVTYPE</span>
+                            <div className="flex flex-col leading-none">
+                                <span className="text-[8px] font-black tracking-[0.4em] text-white/20 uppercase mb-0.5 transition-colors group-hover:text-white/40">ELITE</span>
+                                <span className="text-lg font-light tracking-[0.05em] text-white">
+                                    DEV<span className="font-black">TYPE</span>
+                                </span>
+                            </div>
                         </Link>
-                        <p className="text-sm text-text-muted leading-relaxed max-w-xs">
-                            The ultimate typing platform for developers. Master your syntax speed and conquer the keyboard with real code snippets.
+                        <p className="text-text-muted text-sm max-w-xs leading-relaxed">
+                            The definitive training ground for the elite 1% of software engineers. Master your tools. Silence the noise.
                         </p>
                         <div className="flex items-center gap-4 pt-2">
                             <a href="https://github.com/yash23082007" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
