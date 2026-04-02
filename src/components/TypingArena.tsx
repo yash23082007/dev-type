@@ -29,6 +29,14 @@ export function TypingArena() {
         const handleGlobalKeydown = (e: KeyboardEvent) => {
             if (e.ctrlKey || e.metaKey || e.altKey) return
 
+            // Prevent default for typing keys to avoid scrolling/navigation
+            if (e.key === ' ' || e.key === 'Backspace' || (e.key.length === 1 && e.key !== 'Enter')) {
+                const target = e.target as HTMLElement;
+                if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                }
+            }
+
             // Tab+Enter restart
             if (e.key === 'Tab') {
                 e.preventDefault()
