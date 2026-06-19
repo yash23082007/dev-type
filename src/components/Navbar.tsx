@@ -13,6 +13,8 @@ export function Navbar() {
     const logout = useAuthStore(state => state.logout)
     const authLoading = useAuthStore(state => state.loading)
     
+    const status = useTypingStore(state => state.status)
+    
     const handleLogout = async () => {
         await logout()
         window.location.reload()
@@ -27,7 +29,7 @@ export function Navbar() {
     ]
 
     return (
-        <nav className="fixed top-0 left-0 w-full z-50 border-b border-white/[0.04] bg-background/80 backdrop-blur-xl">
+        <nav className={`fixed top-0 left-0 w-full z-50 border-b border-white/[0.04] bg-background/80 backdrop-blur-xl transition-opacity duration-500 ${status === 'running' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-3 group">

@@ -63,10 +63,13 @@ export function CommandPalette() {
     const theme = useTypingStore(state => state.theme)
     const timeLimit = useTypingStore(state => state.timeLimit)
 
-    // Listen for Ctrl/Cmd+K
+    // Listen for Ctrl/Cmd+K, Ctrl/Cmd+Shift+P, and Escape
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            const isPaletteKey = ((e.metaKey || e.ctrlKey) && e.key === 'k') || 
+                                 ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 'p' || e.key === 'P'))
+            
+            if (isPaletteKey) {
                 e.preventDefault()
                 setOpen(prev => !prev)
             }

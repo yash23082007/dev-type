@@ -77,7 +77,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,white/5,transparent)] -z-10"></div>
         
         <div className="w-full max-w-5xl space-y-12">
-            <div className="flex flex-col items-center text-center space-y-4 mb-8">
+            <div className={`flex flex-col items-center text-center space-y-4 mb-8 transition-opacity duration-500 ${status === 'running' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary/60">Professional Grade</span>
                 <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white">
                   REFINE YOUR <span className="text-text-muted">SYNTAX.</span>
@@ -108,7 +108,7 @@ export default function Home() {
                 </div>
             </div>
 
-            <div className="flex flex-col items-center space-y-8">
+            <div className={`flex flex-col items-center space-y-8 transition-opacity duration-500 ${status === 'running' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 <p className="text-white/20 font-mono text-xs tracking-[0.2em] uppercase">
                     start typing to begin <span className="text-white/40 mx-3">•</span> <kbd className="bg-white/5 px-2 py-1 rounded text-white/50 border border-white/10 mx-1">tab</kbd> + <kbd className="bg-white/5 px-2 py-1 rounded text-white/50 border border-white/10 mx-1">enter</kbd> to restart
                 </p>
