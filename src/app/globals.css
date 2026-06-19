@@ -115,6 +115,86 @@
     --syntax-operator: #c9d1d9;
     --syntax-class-name: #ffa657;
   }
+
+  [data-theme="catppuccin"] {
+    --bg: #1e1e2e;
+    --surface: #181825;
+    --surface-light: #313244;
+    --primary: #cdd6f4;
+    --secondary: #a6adc8;
+    --accent: #cba6f7;
+    --error: #f38ba8;
+    --text-main: #cdd6f4;
+    --text-muted: #6c7086;
+    --text-typed: #cdd6f4;
+    --syntax-keyword: #cba6f7;
+    --syntax-string: #a6e3a1;
+    --syntax-comment: #6c7086;
+    --syntax-number: #fab387;
+    --syntax-function: #89b4fa;
+    --syntax-operator: #94e2d5;
+    --syntax-class-name: #f9e2af;
+  }
+
+  [data-theme="gruvbox"] {
+    --bg: #1d2021;
+    --surface: #282828;
+    --surface-light: #3c3836;
+    --primary: #ebdbb2;
+    --secondary: #a89984;
+    --accent: #b8bb26;
+    --error: #fb4934;
+    --text-main: #ebdbb2;
+    --text-muted: #665c54;
+    --text-typed: #fbf1c7;
+    --syntax-keyword: #fb4934;
+    --syntax-string: #b8bb26;
+    --syntax-comment: #928374;
+    --syntax-number: #d3869b;
+    --syntax-function: #fabd2f;
+    --syntax-operator: #8ec07c;
+    --syntax-class-name: #fe8019;
+  }
+
+  [data-theme="tokyonight"] {
+    --bg: #1a1b26;
+    --surface: #16161e;
+    --surface-light: #292e42;
+    --primary: #c0caf5;
+    --secondary: #565f89;
+    --accent: #7aa2f7;
+    --error: #f7768e;
+    --text-main: #c0caf5;
+    --text-muted: #565f89;
+    --text-typed: #c0caf5;
+    --syntax-keyword: #bb9af7;
+    --syntax-string: #9ece6a;
+    --syntax-comment: #565f89;
+    --syntax-number: #ff9e64;
+    --syntax-function: #7aa2f7;
+    --syntax-operator: #89ddff;
+    --syntax-class-name: #2ac3de;
+  }
+
+  [data-theme="solarized"] {
+    --bg: #002b36;
+    --surface: #073642;
+    --surface-light: #094959;
+    --primary: #839496;
+    --secondary: #586e75;
+    --accent: #268bd2;
+    --error: #dc322f;
+    --text-main: #839496;
+    --text-muted: #586e75;
+    --text-typed: #93a1a1;
+    --syntax-keyword: #859900;
+    --syntax-string: #2aa198;
+    --syntax-comment: #586e75;
+    --syntax-number: #d33682;
+    --syntax-function: #268bd2;
+    --syntax-operator: #93a1a1;
+    --syntax-class-name: #b58900;
+  }
 }
 
 /* Prism classes mapping to variables */
@@ -291,6 +371,16 @@ html, body {
   100% { background-position: 200% 0; }
 }
 
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .animate-fade-in-up {
   animation: fadeInUp 0.6s ease-out forwards;
 }
@@ -304,4 +394,12 @@ html, body {
   );
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
+}
+
+.animate-caret-blink {
+  animation: caret-blink 1s ease-in-out infinite;
+}
+
+.animate-count-up {
+  animation: count-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

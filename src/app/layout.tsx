@@ -13,13 +13,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DevType | Developer Typing Speed",
-  description: "Improve your coding speed and accuracy with real code snippets.",
+  title: "DevType | Elite Developer Typing Trainer",
+  description: "The typing trainer that looks and feels like your editor. Practice real code snippets with syntax highlighting, IDE chrome, and per-key analytics.",
 };
 
 import { ThemeProvider } from "../components/ThemeProvider";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
+import { CommandPalette } from "../components/CommandPalette";
 
 export default function RootLayout({
   children,
@@ -38,6 +39,7 @@ export default function RootLayout({
             {children}
           </div>
           <Footer />
+          <CommandPalette />
         </ThemeProvider>
       </body>
     </html>

@@ -1,15 +1,13 @@
 "use client"
 
 import React from 'react'
-import { Navbar } from '@/components/Navbar'
-import { Footer } from '@/components/Footer'
 import { AboutSection } from '@/components/AboutSection'
 import { UsersIcon, EyeIcon, RocketIcon } from 'lucide-react'
 
 export default function AboutPage() {
     return (
         <main className="min-h-screen bg-background text-white">
-            <div className="pt-24">
+            <div className="pt-4">
                 <AboutSection />
             </div>
 

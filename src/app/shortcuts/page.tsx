@@ -1,8 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { ArrowLeftIcon, CommandIcon, CheckCircle2Icon, XCircleIcon } from 'lucide-react'
+import { CommandIcon, CheckCircle2Icon, XCircleIcon } from 'lucide-react'
 import { gsap } from 'gsap'
 
 type Shortcut = {
@@ -85,11 +84,6 @@ export default function ShortcutsPage() {
         <main className="min-h-screen pb-12 px-4 relative flex flex-col items-center justify-center">
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(0,255,157,0.05),rgba(255,255,255,0))]"></div>
             <div className="absolute inset-0 -z-10 bg-grid-pattern opacity-[0.02]"></div>
-
-            <Link href="/dashboard" className="absolute top-8 left-8 flex items-center gap-2 text-neutral hover:text-white transition-colors">
-                <ArrowLeftIcon className="w-5 h-5" />
-                <span className="text-sm font-bold tracking-widest uppercase">Dashboard</span>
-            </Link>
 
             <div className="glass-panel p-10 max-w-xl w-full text-center border border-white/10 relative overflow-hidden">
                 {status === 'success' && <div className="absolute inset-0 bg-primary/10 -z-10"></div>}

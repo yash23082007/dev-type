@@ -3,8 +3,6 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTypingStore } from '@/store/typingStore'
-import { Navbar } from '@/components/Navbar'
-import { Footer } from '@/components/Footer'
 import { ZapIcon, ClockIcon, ArrowRightIcon, ArrowLeftIcon, Share2Icon, BookmarkIcon } from 'lucide-react'
 
 const POSTS = [

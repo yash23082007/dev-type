@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { generateSymbolDrill } from '../lib/symbolGenerator'
 
 export type TestStatus = 'idle' | 'running' | 'finished'
@@ -94,7 +95,9 @@ interface TypingState {
     getProgress: () => number
 }
 
-export const useTypingStore = create<TypingState>((set, get) => ({
+export const useTypingStore = create<TypingState>()(
+  persist(
+    (set, get) => ({
     language: 'javascript',
     difficulty: 'intermediate',
     timeLimit: 30,
@@ -487,4 +490,24 @@ export const useTypingStore = create<TypingState>((set, get) => ({
         if (!snippet || snippet.length === 0) return 0
         return Math.round((inputCharIndex / snippet.length) * 100)
     }
-}))
+}),
+    {
+        name: 'devtype-settings',
+        partialize: (state) => ({
+            language: state.language,
+            difficulty: state.difficulty,
+            timeLimit: state.timeLimit,
+            theme: state.theme,
+            vsCodeMode: state.vsCodeMode,
+            soundEnabled: state.soundEnabled,
+            soundVolume: state.soundVolume,
+            soundType: state.soundType,
+            mode: state.mode,
+            strictMode: state.strictMode,
+            paceCaretWpm: state.paceCaretWpm,
+            minWpm: state.minWpm,
+            minAccuracy: state.minAccuracy,
+        }),
+    }
+  )
+)

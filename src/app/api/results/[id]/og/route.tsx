@@ -44,10 +44,9 @@ export async function GET(
                         padding: '40px',
                     }}
                 >
-                    {/* DevType Header */}
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
                         <span style={{ fontSize: '28px', fontWeight: 'bold', letterSpacing: '4px', color: '#00ff9d' }}>DEVTYPE</span>
-                        <span style={{ fontSize: '20px', marginLeft: '10px', color: '#666666' }}>// RESULT</span>
+                        <span style={{ fontSize: '20px', marginLeft: '10px', color: '#666666' }}>{"// RESULT"}</span>
                     </div>
 
                     {/* Stats Boxes */}

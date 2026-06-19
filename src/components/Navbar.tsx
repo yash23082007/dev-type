@@ -2,11 +2,13 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { TerminalIcon, UserIcon, LogOutIcon, LayoutDashboardIcon, TrophyIcon } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { TerminalIcon, UserIcon, LogOutIcon, LayoutDashboardIcon, TrophyIcon, Code2Icon, CommandIcon, KeyboardIcon } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { useTypingStore } from '@/store/typingStore'
 
 export function Navbar() {
+    const pathname = usePathname()
     const user = useAuthStore(state => state.user)
     const logout = useAuthStore(state => state.logout)
     const authLoading = useAuthStore(state => state.loading)
@@ -16,9 +18,13 @@ export function Navbar() {
         window.location.reload()
     }
 
-    const openLeaderboard = () => {
-        useTypingStore.getState().setIsLeaderboardOpen(true)
-    }
+    const navLinks = [
+        { href: '/', label: 'Practice' },
+        { href: '/about', label: 'About' },
+        { href: '/snippets', label: 'Snippets' },
+        { href: '/leaderboard', label: 'Leaderboard', icon: <TrophyIcon className="w-4 h-4" /> },
+        { href: '/shortcuts', label: 'Shortcuts' },
+    ]
 
     return (
         <nav className="fixed top-0 left-0 w-full z-50 border-b border-white/[0.04] bg-background/80 backdrop-blur-xl">
@@ -41,9 +47,6 @@ export function Navbar() {
                     </div>
                     
                     <div className="flex flex-col leading-none">
-                        <div className="flex items-baseline">
-                            <span className="text-[10px] font-black tracking-[0.4em] text-white/40 uppercase mb-0.5">ELITE</span>
-                        </div>
                         <span className="text-xl font-light tracking-[0.1em] text-white">
                             DEV<span className="font-black text-white">TYPE</span>
                         </span>
@@ -51,24 +54,28 @@ export function Navbar() {
                 </Link>
 
                 {/* Nav Links */}
-                <div className="flex items-center gap-8">
-                    <Link href="/" className="text-sm font-medium text-text-muted hover:text-white transition-colors">
-                        Practice
-                    </Link>
-                    <Link href="/about" className="text-sm font-medium text-text-muted hover:text-white transition-colors">
-                        About
-                    </Link>
-                    <button 
-                        onClick={openLeaderboard}
-                        className="text-sm font-medium text-text-muted hover:text-white transition-colors flex items-center gap-1.5"
-                    >
-                        <TrophyIcon className="w-4 h-4" /> Leaderboard
-                    </button>
+                <div className="flex items-center gap-6">
+                    {navLinks.map(link => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                                pathname === link.href
+                                    ? 'text-white'
+                                    : 'text-text-muted hover:text-white'
+                            }`}
+                        >
+                            {link.icon}
+                            {link.label}
+                        </Link>
+                    ))}
                     {!authLoading && (
                         <div className="flex items-center gap-6 border-l border-white/10 pl-6 ml-2">
                             {user ? (
                                 <>
-                                    <Link href="/dashboard" className="text-sm font-medium text-text-muted hover:text-white transition-colors flex items-center gap-2">
+                                    <Link href="/dashboard" className={`text-sm font-medium transition-colors flex items-center gap-2 ${
+                                        pathname === '/dashboard' ? 'text-white' : 'text-text-muted hover:text-white'
+                                    }`}>
                                         <LayoutDashboardIcon className="w-4 h-4" /> Dashboard
                                     </Link>
                                     <div className="flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { TypingArena } from "@/components/TypingArena"
 import { MetricsHUD } from "@/components/MetricsHUD"
 import { PostTestModal } from "@/components/PostTestModal"
+import { IDEChrome } from "@/components/IDEChrome"
 import { Settings2Icon, TimerIcon, MonitorIcon, PaletteIcon, Volume2Icon, VolumeXIcon } from "lucide-react"
 import { useTypingStore } from "@/store/typingStore"
 import { useAuthStore } from "@/store/authStore"
@@ -97,7 +98,13 @@ export default function Home() {
                     </div>
                 )}
                 <div className="w-full">
-                    {vsCodeMode ? <MonacoEditorTyping /> : <TypingArena />}
+                    {vsCodeMode ? (
+                        <MonacoEditorTyping />
+                    ) : (
+                        <IDEChrome>
+                            <TypingArena />
+                        </IDEChrome>
+                    )}
                 </div>
             </div>
 
@@ -172,6 +179,10 @@ export default function Home() {
                             <option value="monokai">Monokai</option>
                             <option value="onedark">One Dark</option>
                             <option value="githubdark">GitHub</option>
+                            <option value="catppuccin">Catppuccin</option>
+                            <option value="gruvbox">Gruvbox</option>
+                            <option value="tokyonight">Tokyo Night</option>
+                            <option value="solarized">Solarized</option>
                         </select>
                     </div>
                     {/* Mode Selector */}
@@ -281,7 +292,7 @@ export default function Home() {
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all text-xs font-bold uppercase tracking-wider ${vsCodeMode ? 'bg-white text-black border-white' : 'bg-white/5 text-white/40 border-white/5 hover:border-white/10'}`}
                         >
                             <MonitorIcon className="w-3.5 h-3.5" />
-                            VS Code
+                            Monaco
                         </button>
 
                         <button

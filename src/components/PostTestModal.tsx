@@ -6,6 +6,7 @@ import { gsap } from 'gsap'
 import { RotateCcwIcon, ArrowRightIcon, KeyboardIcon } from 'lucide-react'
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts'
 import { ReplayModal } from './ReplayArena'
+import { KeyboardHeatmap } from './KeyboardHeatmap'
 
 export function PostTestModal() {
     const modalRef = useRef<HTMLDivElement>(null)
@@ -191,6 +192,16 @@ export function PostTestModal() {
                             </span>
                             <span>{keystrokes[keystrokes.length - 1] ? (keystrokes[keystrokes.length - 1].time / 1000).toFixed(1) : 0}s (Finish)</span>
                         </div>
+                    </div>
+                )}
+
+                {/* Per-Key Error Heatmap */}
+                {errors.length > 0 && (
+                    <div className="w-full bg-surface-light border border-white/5 rounded-xl p-4 mb-8">
+                        <h3 className="text-white text-xs font-bold tracking-widest uppercase mb-4 flex items-center gap-2 opacity-80">
+                            <KeyboardIcon className="w-3.5 h-3.5 text-error" /> Error Heatmap
+                        </h3>
+                        <KeyboardHeatmap errors={errors} snippet={snippet} keystrokes={keystrokes} />
                     </div>
                 )}
 
