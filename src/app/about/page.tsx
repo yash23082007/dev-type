@@ -51,7 +51,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-2xl font-black tracking-tight">COMMUNITY</h3>
                             <p className="text-text-muted leading-relaxed">
-                                A global network of high-performance engineers sharing snippets, breaking records, and pushing the boundaries of what's possible in the terminal.
+                                A global network of high-performance engineers sharing snippets, breaking records, and pushing the boundaries of what&apos;s possible in the terminal.
                             </p>
                         </div>
                     </div>

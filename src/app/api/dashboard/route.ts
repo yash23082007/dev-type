@@ -85,15 +85,18 @@ export async function GET() {
       avgWpm: Math.round(data.totalWpm / data.count),
     }))
 
+    // Fetch personal bests
+    const personalBests = await prisma.personalBest.findMany({
+      where: { userId: authUser.userId },
+      orderBy: [
+        { language: 'asc' },
+        { difficulty: 'asc' },
+        { duration: 'asc' }
+      ]
+    })
+
     // Heatmap Calculation
     const heatmap: Record<string, number> = {}
-    
-    // Note: Since mistakes in DB are currently arrays of indices (or arbitrary json depending on early phase impl), 
-    // we would ideally need the snippet string stored or character arrays.
-    // Assuming 'mistakes' is either an array of objects { char: string, count: number } or we mock it for the demo
-    // if the data format isn't strictly typed. For now, we'll return a stub heatmap that the frontend can render.
-    // A robust heatmap requires storing the actual characters mistyped in TestResult.
-    // As a dynamic showcase, we will extract characters if they were stored as string keys, otherwise we use some mock logic based on language to show the UI.
     const mockHeatmap = { '{': 14, ';': 9, '(': 5, '[': 3, '=': 7 }
 
     return NextResponse.json({
@@ -109,6 +112,7 @@ export async function GET() {
       wpmTrend,
       recentTests,
       heatmap: Object.keys(heatmap).length > 0 ? heatmap : mockHeatmap,
+      personalBests: personalBests || []
     })
   } catch (error) {
     console.error('Dashboard API error:', error)

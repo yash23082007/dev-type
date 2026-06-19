@@ -7,7 +7,10 @@ export async function POST(request: Request) {
     try {
         const authUser = await getAuthUser()
         const body = await request.json()
-        const { snippetId, language, difficulty, wpm, cpm, accuracy, timeTaken, mistakes } = body
+        const { 
+            snippetId, language, difficulty, wpm, rawWpm, consistency, 
+            wpmTimeline, charTimings, cpm, accuracy, timeTaken, duration, mistakes 
+        } = body
 
         if (!snippetId || !language) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -46,8 +49,66 @@ export async function POST(request: Request) {
                 accuracy,
                 timeTaken,
                 mistakes: mistakes || {},
+                rawWpm: rawWpm !== undefined ? parseFloat(rawWpm) : null,
+                consistency: consistency !== undefined ? parseFloat(consistency) : null,
+                wpmTimeline: wpmTimeline || null,
+                charTimings: charTimings || null,
             }
         })
+
+        // Check for personal best
+        let isNewPersonalBest = false
+        if (authUser && duration) {
+            const parsedDuration = parseInt(duration)
+            const parsedWpm = parseFloat(wpm)
+            const parsedAccuracy = parseFloat(accuracy)
+
+            const existingPB = await prisma.personalBest.findUnique({
+                where: {
+                    userId_language_difficulty_duration: {
+                        userId: authUser.userId,
+                        language,
+                        difficulty: difficulty || 'intermediate',
+                        duration: parsedDuration,
+                    }
+                }
+            })
+
+            if (!existingPB) {
+                await prisma.personalBest.create({
+                    data: {
+                        userId: authUser.userId,
+                        language,
+                        difficulty: difficulty || 'intermediate',
+                        duration: parsedDuration,
+                        wpm: parsedWpm,
+                        accuracy: parsedAccuracy,
+                        consistency: consistency !== undefined ? parseFloat(consistency) : 0,
+                        rawWpm: rawWpm !== undefined ? parseFloat(rawWpm) : 0,
+                    }
+                })
+                isNewPersonalBest = true
+            } else if (parsedWpm > existingPB.wpm || (parsedWpm === existingPB.wpm && parsedAccuracy > existingPB.accuracy)) {
+                await prisma.personalBest.update({
+                    where: {
+                        userId_language_difficulty_duration: {
+                            userId: authUser.userId,
+                            language,
+                            difficulty: difficulty || 'intermediate',
+                            duration: parsedDuration,
+                        }
+                    },
+                    data: {
+                        wpm: parsedWpm,
+                        accuracy: parsedAccuracy,
+                        consistency: consistency !== undefined ? parseFloat(consistency) : 0,
+                        rawWpm: rawWpm !== undefined ? parseFloat(rawWpm) : 0,
+                        achievedAt: new Date()
+                    }
+                })
+                isNewPersonalBest = true
+            }
+        }
 
         // Update User stats
         const user = await prisma.user.findUnique({ where: { id: userId } })
@@ -88,7 +149,7 @@ export async function POST(request: Request) {
             })
         }
 
-        return NextResponse.json(result, { status: 201 })
+        return NextResponse.json({ ...result, isNewPersonalBest }, { status: 201 })
     } catch (error) {
         console.error('Error saving score:', error)
         return NextResponse.json({ error: 'Failed to save score' }, { status: 500 })

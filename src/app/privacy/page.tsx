@@ -33,7 +33,7 @@ export default function PrivacyPage() {
                     </section>
 
                     <section className="p-8 bg-white/5 border border-white/10 rounded-2xl italic">
-                        "Your speed is yours. Your precision is yours. Your privacy is non-negotiable." — The DevType Protocol
+                        &quot;Your speed is yours. Your precision is yours. Your privacy is non-negotiable.&quot; — The DevType Protocol
                     </section>
                 </div>
             </div>

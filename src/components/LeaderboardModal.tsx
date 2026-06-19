@@ -25,9 +25,10 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const isMounted = true
+        let isMounted = true
 
         const fetchLeaderboard = async () => {
+            setLoading(true)
             try {
                 const res = await fetch('/api/scores')
                 const data = await res.json()
@@ -45,8 +46,11 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         }
 
         if (isOpen) {
-            setLoading(true)
             fetchLeaderboard()
+        }
+
+        return () => {
+            isMounted = false
         }
     }, [isOpen])
 

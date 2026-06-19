@@ -109,9 +109,18 @@ const useStore = create(
     },
 ]
 
+interface SnippetItem {
+    title: string
+    desc: string
+    lang: string
+    lines: number
+    difficulty: string
+    code: string
+}
+
 export default function SnippetsPage() {
     const router = useRouter()
-    const [selectedSnippet, setSelectedSnippet] = useState<any>(null)
+    const [selectedSnippet, setSelectedSnippet] = useState<SnippetItem | null>(null)
     const [copied, setCopied] = useState(false)
 
     const copyToClipboard = (text: string) => {
@@ -120,7 +129,7 @@ export default function SnippetsPage() {
         setTimeout(() => setCopied(false), 2000)
     }
 
-    const handlePractice = (snippet: any) => {
+    const handlePractice = (snippet: SnippetItem) => {
         useTypingStore.getState().setCustomSnippet(snippet.code, snippet.lang)
         router.push('/')
     }

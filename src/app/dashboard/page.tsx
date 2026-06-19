@@ -28,6 +28,10 @@ interface DashboardData {
     language: string; difficulty: string; timeTaken: number; date: string
   }[]
   heatmap: Record<string, number>
+  personalBests: {
+    id: string; language: string; difficulty: string; duration: number;
+    wpm: number; accuracy: number; consistency: number; rawWpm: number; achievedAt: string
+  }[]
 }
 
 const LANG_COLORS: Record<string, string> = {
@@ -206,6 +210,57 @@ export default function DashboardPage() {
             ) : (
                 <div className="text-neutral text-sm h-12 flex items-center justify-center">No mistakes recorded yet.</div>
             )}
+        </div>
+
+        {/* Personal Bests Section */}
+        <div className="glass-panel p-6 border border-white/10 mb-8">
+          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <TrophyIcon className="w-5 h-5 text-yellow-400" />
+            Personal Bests
+          </h3>
+          {data && data.personalBests && data.personalBests.length > 0 ? (
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left text-neutral text-xs uppercase tracking-widest font-bold py-3 px-2">Language</th>
+                    <th className="text-left text-neutral text-xs uppercase tracking-widest font-bold py-3 px-2">Difficulty</th>
+                    <th className="text-center text-neutral text-xs uppercase tracking-widest font-bold py-3 px-2">Duration</th>
+                    <th className="text-right text-neutral text-xs uppercase tracking-widest font-bold py-3 px-2">WPM</th>
+                    <th className="text-right text-neutral text-xs uppercase tracking-widest font-bold py-3 px-2">Raw WPM</th>
+                    <th className="text-right text-neutral text-xs uppercase tracking-widest font-bold py-3 px-2">Accuracy</th>
+                    <th className="text-right text-neutral text-xs uppercase tracking-widest font-bold py-3 px-2">Consistency</th>
+                    <th className="text-right text-neutral text-xs uppercase tracking-widest font-bold py-3 px-2">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.personalBests.map(pb => (
+                    <tr key={pb.id} className="border-b border-white/5 hover:bg-surface/50 transition-colors">
+                      <td className="py-3 px-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: LANG_COLORS[pb.language] || '#888' }}></div>
+                          <span className="text-white capitalize font-mono">{pb.language}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-2 text-neutral capitalize">{pb.difficulty}</td>
+                      <td className="py-3 px-2 text-center text-white">{pb.duration}s</td>
+                      <td className="py-3 px-2 text-right font-bold text-primary">{pb.wpm}</td>
+                      <td className="py-3 px-2 text-right font-mono text-white">{pb.rawWpm}</td>
+                      <td className="py-3 px-2 text-right font-mono text-white">{pb.accuracy}%</td>
+                      <td className="py-3 px-2 text-right font-mono text-white">{pb.consistency}%</td>
+                      <td className="py-3 px-2 text-right text-neutral text-xs">
+                        {new Date(pb.achievedAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-6 text-neutral text-sm">
+              No personal bests achieved yet. Start typing to set some records!
+            </div>
+          )}
         </div>
 
         {/* Practice Modes */}

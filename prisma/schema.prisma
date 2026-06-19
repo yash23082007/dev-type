@@ -19,18 +19,25 @@ model User {
   highestWpm     Float         @default(0)
   avgAccuracy    Float         @default(0)
   streak         Int           @default(0)
+  streakFreeze   Int           @default(0)
   lastTestDate   DateTime?
   testResults    TestResult[]
   customSnippets CustomSnippet[]
+  personalBests  PersonalBest[]
   createdAt      DateTime      @default(now())
 }
 
 model Snippet {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  content     String   
-  language    String   
-  difficulty  String   
-  category    String   
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  content      String   
+  language     String   
+  difficulty   String   
+  category     String   
+  quality      String   @default("generated")
+  votes        Int      @default(0)
+  timesUsed    Int      @default(0)
+  votedUserIds String[]
+  description  String?
 }
 
 model CustomSnippet {
@@ -55,5 +62,31 @@ model TestResult {
   accuracy     Float
   timeTaken    Int      
   mistakes     Json     
+  rawWpm       Float?
+  consistency  Float?
+  wpmTimeline  Json?
+  charTimings  Json?
+  isCustom     Boolean  @default(false)
+  failed       Boolean  @default(false)
+  strictMode   String   @default("normal")
+  mode         String   @default("normal")
+  date         String?
+  flagged      Boolean  @default(false)
   createdAt    DateTime @default(now())
+}
+
+model PersonalBest {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id])
+  language    String
+  difficulty  String
+  duration    Int      // 15, 30, 60, 120
+  wpm         Float
+  accuracy    Float
+  consistency Float
+  rawWpm      Float
+  achievedAt  DateTime @default(now())
+
+  @@unique([userId, language, difficulty, duration])
 }

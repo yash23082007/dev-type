@@ -1,26 +1,40 @@
 "use client"
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useTypingStore } from '../store/typingStore'
 import { gsap } from 'gsap'
 import { RotateCcwIcon, ArrowRightIcon, KeyboardIcon } from 'lucide-react'
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts'
+import { ReplayModal } from './ReplayArena'
 
 export function PostTestModal() {
     const modalRef = useRef<HTMLDivElement>(null)
+    const [mounted, setMounted] = useState(false)
+    const [showReplay, setShowReplay] = useState(false)
 
     const status = useTypingStore(state => state.status)
+    const language = useTypingStore(state => state.language)
     const wpm = useTypingStore(state => state.getWPM())
+    const rawWpm = useTypingStore(state => state.getRawWPM())
+    const consistency = useTypingStore(state => state.getConsistency())
     const accuracy = useTypingStore(state => state.getAccuracy())
     const inputCharIndex = useTypingStore(state => state.inputCharIndex)
     const errors = useTypingStore(state => state.errors)
     const snippet = useTypingStore(state => state.snippet)
     const keystrokes = useTypingStore(state => state.keystrokes)
+    const wpmTimeline = useTypingStore(state => state.wpmTimeline)
     const timeLimit = useTypingStore(state => state.timeLimit)
     const timeRemaining = useTypingStore(state => state.timeRemaining)
     const resetTest = useTypingStore(state => state.resetTest)
+    const newPersonalBest = useTypingStore(state => state.newPersonalBest)
 
     const timeTaken = timeLimit - timeRemaining
     const cpm = timeTaken > 0 ? Math.round((inputCharIndex / timeTaken) * 60) : inputCharIndex
+
+    useEffect(() => {
+        const timer = setTimeout(() => setMounted(true), 0)
+        return () => clearTimeout(timer)
+    }, [])
 
     useEffect(() => {
         if (status === 'finished' && modalRef.current) {
@@ -64,39 +78,78 @@ export function PostTestModal() {
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm overflow-y-auto">
             <div
                 ref={modalRef}
-                className="glass-panel p-10 max-w-lg w-full flex flex-col items-center border border-primary/20 shadow-[0_0_50px_rgba(0,255,157,0.1)]"
+                className="glass-panel p-8 md:p-10 max-w-xl w-full flex flex-col items-center border border-primary/20 shadow-[0_0_50px_rgba(0,255,157,0.1)] my-8"
             >
                 <KeyboardIcon className="w-10 h-10 text-primary mb-4 opacity-50" />
                 <h2 className="text-3xl font-black text-white mb-2 neon-text-primary tracking-wider uppercase">Test Complete</h2>
+                {newPersonalBest && (
+                    <div className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs font-bold tracking-widest px-4 py-1.5 rounded-lg mb-4 animate-pulse flex items-center gap-1.5 uppercase font-mono">
+                        🏆 New Personal Best!
+                    </div>
+                )}
                 <p className={`text-lg font-bold mb-8 ${ratingColor}`}>{rating}</p>
 
-                <div className="grid grid-cols-2 gap-4 w-full mb-8">
-                    <div className="flex flex-col items-center justify-center p-5 bg-surface rounded-xl border border-white/5">
-                        <span className="text-secondary text-[10px] font-bold tracking-widest uppercase mb-1">WPM</span>
-                        <span className="text-5xl font-black text-white neon-text-primary">{wpm}</span>
+                {/* 6-box Stats Grid */}
+                <div className="grid grid-cols-3 gap-4 w-full mb-8">
+                    <div className="flex flex-col items-center justify-center p-3 bg-surface rounded-xl border border-white/5">
+                        <span className="text-secondary text-[9px] font-bold tracking-widest uppercase mb-1">WPM</span>
+                        <span className="text-2xl font-black text-white neon-text-primary">{wpm}</span>
                     </div>
-                    <div className="flex flex-col items-center justify-center p-5 bg-surface rounded-xl border border-white/5">
-                        <span className="text-secondary text-[10px] font-bold tracking-widest uppercase mb-1">Accuracy</span>
-                        <span className="text-5xl font-black text-white">{accuracy}%</span>
+                    <div className="flex flex-col items-center justify-center p-3 bg-surface rounded-xl border border-white/5">
+                        <span className="text-secondary text-[9px] font-bold tracking-widest uppercase mb-1">Accuracy</span>
+                        <span className="text-2xl font-black text-white">{accuracy}%</span>
                     </div>
-                    <div className="flex flex-col items-center justify-center p-4 bg-surface rounded-xl border border-white/5">
-                        <span className="text-secondary text-[10px] font-bold tracking-widest uppercase mb-1">CPM</span>
-                        <span className="text-3xl font-black text-neutral">{cpm}</span>
+                    <div className="flex flex-col items-center justify-center p-3 bg-surface rounded-xl border border-white/5">
+                        <span className="text-secondary text-[9px] font-bold tracking-widest uppercase mb-1">Mistakes</span>
+                        <span className={`text-2xl font-black ${errors.length > 0 ? 'text-error' : 'text-primary'}`}>{errors.length}</span>
                     </div>
-                    <div className="flex flex-col items-center justify-center p-4 bg-surface rounded-xl border border-white/5">
-                        <span className="text-secondary text-[10px] font-bold tracking-widest uppercase mb-1">Mistakes</span>
-                        <span className={`text-3xl font-black ${errors.length > 0 ? 'text-error' : 'text-primary'}`}>{errors.length}</span>
+                    <div className="flex flex-col items-center justify-center p-3 bg-surface rounded-xl border border-white/5">
+                        <span className="text-secondary text-[9px] font-bold tracking-widest uppercase mb-1">Raw WPM</span>
+                        <span className="text-2xl font-black text-white">{rawWpm}</span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center p-3 bg-surface rounded-xl border border-white/5">
+                        <span className="text-secondary text-[9px] font-bold tracking-widest uppercase mb-1">Consistency</span>
+                        <span className="text-2xl font-black text-white">{consistency}%</span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center p-3 bg-surface rounded-xl border border-white/5">
+                        <span className="text-secondary text-[9px] font-bold tracking-widest uppercase mb-1">CPM</span>
+                        <span className="text-2xl font-black text-neutral">{cpm}</span>
                     </div>
                 </div>
+
+                {/* Over-Time Graph */}
+                {mounted && wpmTimeline && wpmTimeline.length > 0 && (
+                    <div className="w-full bg-surface border border-white/5 rounded-xl p-4 mb-8">
+                        <h3 className="text-white text-xs font-bold tracking-widest uppercase mb-3 flex items-center gap-2 opacity-80">
+                            <span>📈</span> Performance Over Time
+                        </h3>
+                        <div className="w-full h-40">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={wpmTimeline} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#1c1c1c" />
+                                    <XAxis dataKey="second" stroke="#555" fontSize={10} tickLine={false} />
+                                    <YAxis stroke="#555" fontSize={10} tickLine={false} />
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: '#0a0a0a', borderColor: '#222', borderRadius: '8px' }}
+                                        labelStyle={{ color: '#fff', fontWeight: 'bold' }}
+                                        itemStyle={{ fontSize: '11px' }}
+                                    />
+                                    <Line type="monotone" dataKey="wpm" name="WPM" stroke="#00ff9d" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                                    <Line type="monotone" dataKey="raw" name="Raw WPM" stroke="#ff4444" strokeWidth={1.5} strokeDasharray="3 3" dot={false} />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                )}
 
                 {/* Typing Coach Feedback */}
                 {coachSuggestions.length > 0 && (
                     <div className="w-full bg-surface-light/50 border border-primary/20 rounded-xl p-5 mb-8">
                         <h3 className="text-primary text-xs font-bold tracking-widest uppercase mb-3 flex items-center gap-2">
-                            <span className="text-base">🤖</span> Typing Coach
+                            <span>🤖</span> Typing Coach
                         </h3>
                         <ul className="list-disc list-inside text-sm text-neutral space-y-1.5 font-mono">
                             {coachSuggestions.map((suggestion, idx) => (
@@ -141,6 +194,14 @@ export function PostTestModal() {
                     </div>
                 )}
 
+                <button
+                    onClick={() => setShowReplay(true)}
+                    className="w-full py-3.5 rounded-lg bg-surface hover:bg-surface-light text-white font-bold tracking-widest border border-white/10 transition-all hover:border-primary/50 flex items-center justify-center gap-2 text-sm mb-4"
+                >
+                    <KeyboardIcon className="w-4 h-4 text-primary" />
+                    WATCH REPLAY
+                </button>
+
                 <div className="flex w-full gap-3">
                     <button
                         onClick={resetTest}
@@ -158,6 +219,16 @@ export function PostTestModal() {
                     </button>
                 </div>
             </div>
+
+            {/* Replay Modal */}
+            {showReplay && (
+                <ReplayModal 
+                    onClose={() => setShowReplay(false)} 
+                    snippet={snippet} 
+                    keystrokes={keystrokes} 
+                    language={language}
+                />
+            )}
         </div>
     )
 }

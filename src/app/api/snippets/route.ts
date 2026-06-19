@@ -6,44 +6,53 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url)
         const language = searchParams.get('language') || 'javascript'
         const difficulty = searchParams.get('difficulty') || 'intermediate'
+        const category = searchParams.get('category')
         
-        if (difficulty === 'algorithm') {
-            const algoSnippets = [
-                {
-                    id: "algo-twosum",
-                    content: "function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}",
-                    language: "javascript",
-                    difficulty: "algorithm",
-                    category: "leetcode"
-                },
-                {
-                    id: "algo-binarysearch",
-                    content: "function search(nums, target) {\n  let left = 0;\n  let right = nums.length - 1;\n  while (left <= right) {\n    let mid = Math.floor((left + right) / 2);\n    if (nums[mid] === target) return mid;\n    if (nums[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}",
-                    language: "javascript",
-                    difficulty: "algorithm",
-                    category: "leetcode"
-                }
-            ]
-            const randomIndex = Math.floor(Math.random() * algoSnippets.length)
-            return NextResponse.json(algoSnippets[randomIndex], { status: 200 })
-        }
+        let snippets = []
 
-        const snippets = await prisma.snippet.findMany({
-            where: {
-                language,
-                difficulty,
+        if (category) {
+            snippets = await prisma.snippet.findMany({
+                where: {
+                    language,
+                    category
+                }
+            })
+        } else {
+            // 1. Try to fetch curated snippets matching the criteria
+            snippets = await prisma.snippet.findMany({
+                where: {
+                    language,
+                    difficulty,
+                    quality: 'curated'
+                }
+            })
+            
+            // 2. If no curated found, try to fetch generated snippets
+            if (snippets.length === 0) {
+                snippets = await prisma.snippet.findMany({
+                    where: {
+                        language,
+                        difficulty,
+                        quality: 'generated'
+                    }
+                })
             }
-        })
+
+            // 3. If still no snippets found (e.g. for algorithm mode in diacritic/markdown cases), fallback to any matching language
+            if (snippets.length === 0) {
+                snippets = await prisma.snippet.findMany({
+                    where: {
+                        language
+                    }
+                })
+            }
+        }
         
         let snippet = null
         if (snippets.length > 0) {
             // Pick a random snippet from the matched ones
             const randomIndex = Math.floor(Math.random() * snippets.length)
             snippet = snippets[randomIndex]
-        } else {
-             // Fallback if none found for criteria
-            const anySnippet = await prisma.snippet.findFirst()
-            snippet = anySnippet
         }
 
         if (!snippet) {
@@ -52,7 +61,9 @@ export async function GET(request: Request) {
                  content: "function calculateWPM(chars, timeTaken) { return (chars / 5) / (timeTaken / 60); }",
                  language: "javascript",
                  difficulty: "beginner",
-                 category: "coding" 
+                 category: "coding",
+                 quality: "curated",
+                 description: "Default fallback javascript snippet."
              }, { status: 200 })
         }
 

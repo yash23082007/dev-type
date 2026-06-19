@@ -23,7 +23,7 @@ export function AboutSection() {
                         </div>
                         
                         <p className="text-xl text-text-muted leading-relaxed font-medium">
-                            DevType isn't just a typing test. It's a high-performance environment designed to bridge the gap between thought and code. We use real-world production snippets to train your muscle memory for the syntax that matters.
+                            DevType isn&apos;t just a typing test. It&apos;s a high-performance environment designed to bridge the gap between thought and code. We use real-world production snippets to train your muscle memory for the syntax that matters.
                         </p>
 
                         <div className="flex pt-4">

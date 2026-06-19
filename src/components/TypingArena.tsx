@@ -1,14 +1,18 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { useTypingStore } from '../store/typingStore'
+import { getCharTokenClasses } from '../lib/syntaxHighlight'
 import { gsap } from 'gsap'
 
 export function TypingArena() {
     const containerRef = useRef<HTMLDivElement>(null)
+    const activeSpanRef = useRef<HTMLSpanElement>(null)
     const [tabPressed, setTabPressed] = useState(false)
 
     const snippet = useTypingStore(state => state.snippet)
+    const language = useTypingStore(state => state.language)
+    const mode = useTypingStore(state => state.mode)
     const inputCharIndex = useTypingStore(state => state.inputCharIndex)
     const errors = useTypingStore(state => state.errors)
     const status = useTypingStore(state => state.status)
@@ -18,6 +22,35 @@ export function TypingArena() {
     const getProgress = useTypingStore(state => state.getProgress)
 
     const progress = getProgress()
+
+    const charClasses = useMemo(() => {
+        return getCharTokenClasses(snippet, language)
+    }, [snippet, language])
+
+    const totalLines = useMemo(() => {
+        return snippet.split('\n').length
+    }, [snippet])
+
+    const currentLineNumber = useMemo(() => {
+        const textBeforeCursor = snippet.slice(0, inputCharIndex)
+        return textBeforeCursor.split('\n').length
+    }, [snippet, inputCharIndex])
+
+    // Center scroll active line
+    useEffect(() => {
+        if (activeSpanRef.current && containerRef.current) {
+            const spanEl = activeSpanRef.current
+            const containerEl = containerRef.current
+            const spanTop = spanEl.offsetTop
+            const containerHeight = containerEl.clientHeight
+            const scrollTop = spanTop - containerHeight / 2 + spanEl.clientHeight / 2
+            
+            containerEl.scrollTo({
+                top: Math.max(0, scrollTop),
+                behavior: 'smooth'
+            })
+        }
+    }, [inputCharIndex])
 
     useEffect(() => {
         if (status === 'idle' && !snippet) {
@@ -124,9 +157,16 @@ export function TypingArena() {
 
             <div
                 ref={containerRef}
-                className="glass-panel p-8 md:p-14 font-mono text-lg md:text-2xl tracking-normal leading-relaxed shadow-2xl relative outline-none border-white/[0.03]"
+                className="glass-panel p-8 md:p-14 font-mono text-lg md:text-2xl tracking-normal leading-relaxed shadow-2xl relative outline-none border-white/[0.03] max-h-[360px] overflow-y-auto custom-scrollbar scroll-smooth"
                 tabIndex={0}
             >
+                {/* Line progress indicator */}
+                {mode === 'file' && (
+                    <div className="absolute top-4 left-6 text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 bg-white/5 border border-white/10 px-2 py-0.5 rounded">
+                        Line {currentLineNumber} / {totalLines}
+                    </div>
+                )}
+
                 {/* Tab indicator */}
                 {tabPressed && (
                     <div className="absolute top-4 right-6 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 animate-pulse">
@@ -144,12 +184,36 @@ export function TypingArena() {
                             } else {
                                 colorClass = "text-white"
                             }
+                        } else {
+                            const tokenClass = charClasses[index]
+                            if (tokenClass) {
+                                colorClass = `${tokenClass} opacity-35`
+                            }
                         }
 
                         const isCurrentChar = index === inputCharIndex
 
+                        // Handle newlines as full-width breaks so code wraps beautifully
+                        if (char === '\n') {
+                            return (
+                                <div 
+                                    key={index} 
+                                    ref={isCurrentChar ? activeSpanRef : null}
+                                    className="w-full h-0 basis-full flex items-center relative"
+                                >
+                                    {isCurrentChar && status !== 'finished' && (
+                                        <span className="absolute left-0 bottom-[-2px] w-2 h-4 bg-white animate-pulse rounded-sm block"></span>
+                                    )}
+                                </div>
+                            )
+                        }
+
                         return (
-                            <span key={index} className="relative">
+                            <span 
+                                key={index} 
+                                ref={isCurrentChar ? activeSpanRef : null}
+                                className="relative"
+                            >
                                 {isCurrentChar && status !== 'finished' && (
                                     <span className="absolute left-0 bottom-[-2px] w-full h-[2px] bg-white animate-pulse rounded-sm block"></span>
                                 )}
@@ -164,3 +228,4 @@ export function TypingArena() {
         </div>
     )
 }
+
