@@ -23,6 +23,7 @@ interface LeaderboardModalProps {
 export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
     const [leaderboard, setLeaderboard] = useState<TestResult[]>([])
     const [loading, setLoading] = useState(true)
+    const [tab, setTab] = useState<'all-time' | 'daily' | 'leetcode'>('all-time')
 
     useEffect(() => {
         let isMounted = true
@@ -30,7 +31,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         const fetchLeaderboard = async () => {
             setLoading(true)
             try {
-                const res = await fetch('/api/scores')
+                const typeParam = tab !== 'all-time' ? `?type=${tab}` : ''
+                const res = await fetch(`/api/scores${typeParam}`)
                 const data = await res.json()
                 if (isMounted) {
                     setLeaderboard(Array.isArray(data) ? data : [])
@@ -52,7 +54,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         return () => {
             isMounted = false
         }
-    }, [isOpen])
+    }, [isOpen, tab])
 
     if (!isOpen) return null
 
@@ -69,9 +71,24 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                     <XIcon className="w-5 h-5" />
                 </button>
 
-                <div className="flex items-center gap-3 mb-6">
-                    <TrophyIcon className="w-7 h-7 text-yellow-400" />
-                    <h2 className="text-2xl font-black text-white tracking-wider uppercase">Leaderboard</h2>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pr-8">
+                    <div className="flex items-center gap-3">
+                        <TrophyIcon className="w-7 h-7 text-yellow-400" />
+                        <h2 className="text-2xl font-black text-white tracking-wider uppercase">Leaderboard</h2>
+                    </div>
+                    <div className="flex bg-surface border border-white/5 p-1 rounded-lg self-start sm:self-auto">
+                        {(['all-time', 'daily', 'leetcode'] as const).map((t) => (
+                            <button
+                                key={t}
+                                onClick={() => setTab(t)}
+                                className={`px-3 py-1.5 text-[10px] font-black rounded-md tracking-wider transition-all uppercase ${
+                                    tab === t ? 'bg-white text-black' : 'text-neutral hover:text-white'
+                                }`}
+                            >
+                                {t === 'all-time' ? 'All Time' : t === 'daily' ? 'Today' : 'LeetCode'}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {loading ? (

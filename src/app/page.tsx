@@ -27,8 +27,24 @@ export default function Home() {
   const setVsCodeMode = useTypingStore(state => state.setVsCodeMode)
   const setSoundEnabled = useTypingStore(state => state.setSoundEnabled)
 
+  const mode = useTypingStore(state => state.mode)
+  const setMode = useTypingStore(state => state.setMode)
+  const strictMode = useTypingStore(state => state.strictMode)
+  const setStrictMode = useTypingStore(state => state.setStrictMode)
+  const paceCaretWpm = useTypingStore(state => state.paceCaretWpm)
+  const setPaceCaretWpm = useTypingStore(state => state.setPaceCaretWpm)
+  const soundType = useTypingStore(state => state.soundType)
+  const setSoundType = useTypingStore(state => state.setSoundType)
+  const soundVolume = useTypingStore(state => state.soundVolume)
+  const setSoundVolume = useTypingStore(state => state.setSoundVolume)
+  const minWpm = useTypingStore(state => state.minWpm)
+  const setMinWpm = useTypingStore(state => state.setMinWpm)
+  const minAccuracy = useTypingStore(state => state.minAccuracy)
+  const setMinAccuracy = useTypingStore(state => state.setMinAccuracy)
+
   const fetchSnippet = useTypingStore(state => state.fetchSnippet)
   const status = useTypingStore(state => state.status)
+  const snippetDescription = useTypingStore(state => state.snippetDescription)
   const isLeaderboardOpen = useTypingStore(state => state.isLeaderboardOpen)
   const setIsLeaderboardOpen = useTypingStore(state => state.setIsLeaderboardOpen)
 
@@ -69,6 +85,17 @@ export default function Home() {
 
             <div className="w-full">
                 <MetricsHUD />
+                {difficulty === 'algorithm' && snippetDescription && (
+                    <div className="glass-panel p-5 mb-5 border border-primary/10 bg-[#070707] rounded-xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-primary shadow-[0_0_10px_rgba(255,255,255,0.2)]"></div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary/80 font-mono">LeetCode Challenge</span>
+                        </div>
+                        <p className="text-sm font-mono text-white/80 leading-relaxed">
+                            {snippetDescription}
+                        </p>
+                    </div>
+                )}
                 <div className="w-full">
                     {vsCodeMode ? <MonacoEditorTyping /> : <TypingArena />}
                 </div>
@@ -147,9 +174,108 @@ export default function Home() {
                             <option value="githubdark">GitHub</option>
                         </select>
                     </div>
+                    {/* Mode Selector */}
+                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 hover:border-white/10 transition-colors">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">Mode</span>
+                        <select 
+                            value={mode} 
+                            onChange={(e) => {
+                                setMode(e.target.value as 'normal' | 'symbol-drill' | 'file' | 'custom')
+                                if (status === 'idle') fetchSnippet()
+                            }}
+                            className="bg-transparent text-xs font-bold text-white outline-none cursor-pointer uppercase tracking-wider"
+                            disabled={status === 'running'}
+                        >
+                            <option value="normal">Normal</option>
+                            <option value="symbol-drill">Symbol Drill</option>
+                            <option value="file">Real File</option>
+                        </select>
+                    </div>
+
+                    {/* Strictness Selector */}
+                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 hover:border-white/10 transition-colors">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">Strict</span>
+                        <select 
+                            value={strictMode} 
+                            onChange={(e) => setStrictMode(e.target.value as 'normal' | 'expert' | 'master')}
+                            className="bg-transparent text-xs font-bold text-white outline-none cursor-pointer uppercase tracking-wider"
+                            disabled={status === 'running'}
+                        >
+                            <option value="normal">Normal</option>
+                            <option value="expert">Expert</option>
+                            <option value="master">Master</option>
+                        </select>
+                    </div>
+
+                    {/* Pace Caret */}
+                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 hover:border-white/10 transition-colors">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">Pace</span>
+                        <select
+                            value={paceCaretWpm === null ? "off" : "on"}
+                            onChange={(e) => {
+                                if (e.target.value === "off") {
+                                    setPaceCaretWpm(null)
+                                } else {
+                                    setPaceCaretWpm(80)
+                                }
+                            }}
+                            className="bg-transparent text-xs font-bold text-white outline-none cursor-pointer uppercase tracking-wider"
+                            disabled={status === 'running'}
+                        >
+                            <option value="off">Off</option>
+                            <option value="on">On</option>
+                        </select>
+                        {paceCaretWpm !== null && (
+                            <input 
+                                type="number"
+                                min="10"
+                                max="300"
+                                value={paceCaretWpm}
+                                onChange={(e) => {
+                                    const v = parseInt(e.target.value)
+                                    setPaceCaretWpm(isNaN(v) ? 0 : v)
+                                }}
+                                className="w-12 bg-white/10 text-xs font-bold text-white outline-none px-1 py-0.5 rounded text-center"
+                                disabled={status === 'running'}
+                            />
+                        )}
+                    </div>
+
+                    {/* Min WPM Failure Threshold */}
+                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 hover:border-white/10 transition-colors">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">Min WPM</span>
+                        <input 
+                            type="number"
+                            placeholder="Off"
+                            value={minWpm === null ? "" : minWpm}
+                            onChange={(e) => {
+                                const val = e.target.value === "" ? null : parseInt(e.target.value)
+                                setMinWpm(val)
+                            }}
+                            className="w-10 bg-transparent text-xs font-bold text-white outline-none text-center placeholder-white/20"
+                            disabled={status === 'running'}
+                        />
+                    </div>
+                    
+                    {/* Min Accuracy Failure Threshold */}
+                    <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 hover:border-white/10 transition-colors">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">Min Acc</span>
+                        <input 
+                            type="number"
+                            placeholder="Off"
+                            value={minAccuracy === null ? "" : minAccuracy}
+                            onChange={(e) => {
+                                const val = e.target.value === "" ? null : parseInt(e.target.value)
+                                setMinAccuracy(val)
+                            }}
+                            className="w-10 bg-transparent text-xs font-bold text-white outline-none text-center placeholder-white/20"
+                            disabled={status === 'running'}
+                        />
+                        {minAccuracy !== null && <span className="text-[10px] text-white/60">%</span>}
+                    </div>
 
                     {/* Mode Toggles */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                         <button
                             onClick={() => setVsCodeMode(!vsCodeMode)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all text-xs font-bold uppercase tracking-wider ${vsCodeMode ? 'bg-white text-black border-white' : 'bg-white/5 text-white/40 border-white/5 hover:border-white/10'}`}
@@ -164,6 +290,37 @@ export default function Home() {
                         >
                             {soundEnabled ? <Volume2Icon className="w-3.5 h-3.5" /> : <VolumeXIcon className="w-3.5 h-3.5" />}
                         </button>
+
+                        {soundEnabled && (
+                            <>
+                                <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 hover:border-white/10 transition-colors">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">Click</span>
+                                    <select 
+                                        value={soundType} 
+                                        onChange={(e) => setSoundType(e.target.value as 'mechanical' | 'typewriter' | 'beep' | 'standard')}
+                                        className="bg-transparent text-xs font-bold text-white outline-none cursor-pointer uppercase tracking-wider font-mono"
+                                    >
+                                        <option value="standard">Standard</option>
+                                        <option value="mechanical">Mechanical</option>
+                                        <option value="typewriter">Typewriter</option>
+                                        <option value="beep">Beep</option>
+                                    </select>
+                                </div>
+                                
+                                <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg border border-white/5 hover:border-white/10 transition-colors">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">Vol</span>
+                                    <input 
+                                        type="range"
+                                        min="0"
+                                        max="100"
+                                        value={soundVolume}
+                                        onChange={(e) => setSoundVolume(parseInt(e.target.value))}
+                                        className="w-16 h-1 bg-white/15 rounded-lg appearance-none cursor-pointer accent-white"
+                                    />
+                                    <span className="text-[10px] font-mono text-white/60 w-6">{soundVolume}%</span>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

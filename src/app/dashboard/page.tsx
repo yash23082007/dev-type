@@ -19,6 +19,7 @@ interface DashboardData {
     avgAccuracy: number
     bestWpm: number
     streak: number
+    streakFreeze: number
   }
   languageBreakdown: { language: string; count: number; avgWpm: number }[]
   difficultyBreakdown: { difficulty: string; count: number; avgWpm: number }[]
@@ -27,7 +28,8 @@ interface DashboardData {
     id: string; wpm: number; cpm: number; accuracy: number;
     language: string; difficulty: string; timeTaken: number; date: string
   }[]
-  heatmap: Record<string, number>
+  activityHeatmap: { date: string; count: number }[]
+  weaknessHeatmap: Record<string, number>
   personalBests: {
     id: string; language: string; difficulty: string; duration: number;
     wpm: number; accuracy: number; consistency: number; rawWpm: number; achievedAt: string
@@ -111,16 +113,32 @@ export default function DashboardPage() {
 
       <div className="max-w-7xl mx-auto">
         {/* Welcome */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-black text-white tracking-wider">
-            Welcome back, <span className="text-primary">{user?.username}</span>
-          </h1>
-          <p className="text-neutral mt-1 text-sm">Here&apos;s your typing performance overview</p>
+        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-black text-white tracking-wider">
+              Welcome back, <span className="text-primary">{user?.username}</span>
+            </h1>
+            <p className="text-neutral mt-1 text-sm">Here&apos;s your typing performance overview</p>
+          </div>
+          <div className="flex gap-3">
+            <a 
+              href="/api/dashboard/export?format=csv" 
+              className="bg-surface text-white border border-white/10 px-4 py-2 rounded-lg font-bold text-xs tracking-widest uppercase hover:bg-surface-light hover:border-white/30 transition-colors flex items-center gap-1.5"
+            >
+              Export CSV
+            </a>
+            <a 
+              href="/api/dashboard/export?format=json" 
+              className="bg-surface text-white border border-white/10 px-4 py-2 rounded-lg font-bold text-xs tracking-widest uppercase hover:bg-surface-light hover:border-white/30 transition-colors flex items-center gap-1.5"
+            >
+              Export JSON
+            </a>
+          </div>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-          <StatCard icon={<FlameIcon className="w-5 h-5" />} label="Streak" value={`${data?.stats.streak ?? 0} Days`} color="text-orange-400" />
+          <StatCard icon={<FlameIcon className="w-5 h-5" />} label="Streak" value={`${data?.stats.streak ?? 0} Days (${data?.stats.streakFreeze ?? 0} Freezes)`} color="text-orange-400" />
           <StatCard icon={<ZapIcon className="w-5 h-5" />} label="Best WPM" value={data?.stats.bestWpm ?? 0} color="text-primary" />
           <StatCard icon={<BarChart3Icon className="w-5 h-5" />} label="Avg WPM" value={data?.stats.avgWpm ?? 0} color="text-white" />
           <StatCard icon={<TargetIcon className="w-5 h-5" />} label="Accuracy" value={`${data?.stats.avgAccuracy ?? 0}%`} color="text-secondary" />
@@ -189,27 +207,104 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Heatmap Section */}
-        <div className="glass-panel p-6 border border-white/10 mb-8">
+        {/* Heatmaps Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Practice Activity Calendar */}
+          <div className="lg:col-span-2 glass-panel p-6 border border-white/10">
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <KeyboardIcon className="w-5 h-5 text-error" />
-                Most Mistyped Keys
+              <BarChart3Icon className="w-5 h-5 text-primary" />
+              Practice Activity (Last 150 Days)
             </h3>
-            {data && data.heatmap && Object.keys(data.heatmap).length > 0 ? (
-                <div className="flex flex-col gap-3">
-                  {Object.entries(data.heatmap).sort((a,b) => b[1] - a[1]).slice(0, 5).map(([char, count]) => (
-                      <div key={char} className="flex items-center gap-4">
-                          <span className="w-8 font-mono text-white text-center bg-surface border border-white/10 rounded-md py-1">{char === ' ' ? 'SPC' : char}</span>
-                          <div className="flex-1 h-3 bg-surface rounded-full overflow-hidden">
-                              <div className="h-full bg-error rounded-full transition-all" style={{ width: `${Math.min(100, (count / 20) * 100)}%` }}></div>
-                          </div>
-                          <span className="text-xs text-neutral w-6 text-right font-mono">{count}</span>
+            {data && data.activityHeatmap ? (
+              <div>
+                <div className="flex flex-wrap gap-1 p-2 bg-[#050505] rounded-xl border border-white/5 max-h-[160px] overflow-y-auto custom-scrollbar">
+                  {Array.from({ length: 150 }).map((_, i) => {
+                    const d = new Date()
+                    d.setDate(d.getDate() - (149 - i))
+                    const dateStr = d.toISOString().split('T')[0]
+                    const match = data.activityHeatmap.find(h => h.date === dateStr)
+                    const count = match ? match.count : 0
+                    
+                    let bgClass = "bg-white/5 border border-transparent"
+                    if (count > 0) {
+                      if (count <= 2) bgClass = "bg-[#00ff9d]/20 border border-[#00ff9d]/30 text-white"
+                      else if (count <= 5) bgClass = "bg-[#00ff9d]/50 border border-[#00ff9d]/60 text-black shadow-[0_0_10px_rgba(0,255,157,0.3)]"
+                      else bgClass = "bg-primary text-black shadow-[0_0_15px_rgba(0,255,157,0.6)]"
+                    }
+
+                    return (
+                      <div 
+                        key={dateStr}
+                        className={`w-4 h-4 rounded-sm flex items-center justify-center text-[7px] font-bold select-none ${bgClass}`}
+                        title={`${dateStr}: ${count} tests`}
+                      >
+                        {count > 0 ? count : ""}
                       </div>
-                  ))}
+                    )
+                  })}
                 </div>
+                <div className="flex justify-between mt-3 text-[10px] text-neutral font-mono">
+                  <span>150 Days Ago</span>
+                  <div className="flex gap-2 items-center">
+                    <span>Less</span>
+                    <span className="w-3 h-3 bg-white/5 rounded-sm"></span>
+                    <span className="w-3 h-3 bg-[#00ff9d]/20 rounded-sm"></span>
+                    <span className="w-3 h-3 bg-[#00ff9d]/50 rounded-sm"></span>
+                    <span className="w-3 h-3 bg-primary rounded-sm"></span>
+                    <span>More</span>
+                  </div>
+                  <span>Today</span>
+                </div>
+              </div>
             ) : (
-                <div className="text-neutral text-sm h-12 flex items-center justify-center">No mistakes recorded yet.</div>
+              <div className="text-neutral text-sm h-12 flex items-center justify-center">No activity recorded.</div>
             )}
+          </div>
+
+          {/* Character Latency Weakness Layout */}
+          <div className="glass-panel p-6 border border-white/10">
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <KeyboardIcon className="w-5 h-5 text-error" />
+              Reaction Weakness (Latency)
+            </h3>
+            {data && data.weaknessHeatmap && Object.keys(data.weaknessHeatmap).length > 0 ? (
+              <div className="flex flex-col items-center justify-center">
+                {[
+                  ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+                  ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+                  ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+                ].map((row, rIdx) => (
+                  <div key={rIdx} className="flex justify-center gap-1 mb-1" style={{ paddingLeft: rIdx === 1 ? '12px' : rIdx === 2 ? '24px' : '0px' }}>
+                    {row.map(key => {
+                      const delay = data.weaknessHeatmap[key]
+                      let capColor = 'bg-white/5 border border-white/10 text-white/50'
+                      if (delay !== undefined && delay > 0) {
+                        if (delay < 150) capColor = 'bg-[#00ff9d]/20 border border-[#00ff9d]/40 text-[#00ff9d]'
+                        else if (delay < 250) capColor = 'bg-[#e6db74]/20 border border-[#e6db74]/40 text-[#e6db74]'
+                        else capColor = 'bg-[#ff4444]/20 border border-[#ff4444]/40 text-[#ff4444]'
+                      }
+                      return (
+                        <div 
+                          key={key} 
+                          className={`w-6 h-6 flex flex-col items-center justify-center rounded font-mono font-bold text-[8px] uppercase transition-all select-none ${capColor}`}
+                          title={delay ? `${delay}ms avg delay` : 'No timing'}
+                        >
+                          <span>{key}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                ))}
+                <div className="flex gap-3 mt-3 text-[8px] text-neutral font-mono">
+                  <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 bg-[#00ff9d]/20 rounded-full"></span> Fast (&lt;150ms)</span>
+                  <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 bg-[#e6db74]/20 rounded-full"></span> Avg (150-250ms)</span>
+                  <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 bg-[#ff4444]/20 rounded-full"></span> Slow (&gt;250ms)</span>
+                </div>
+              </div>
+            ) : (
+              <div className="text-neutral text-sm h-24 flex items-center justify-center">No reaction timings recorded yet.</div>
+            )}
+          </div>
         </div>
 
         {/* Personal Bests Section */}

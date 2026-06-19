@@ -1,7 +1,10 @@
 import Prism from 'prismjs'
+import 'prismjs/components/prism-clike'
+import 'prismjs/components/prism-markup'
 import 'prismjs/components/prism-javascript'
-import 'prismjs/components/prism-python'
+import 'prismjs/components/prism-c'
 import 'prismjs/components/prism-cpp'
+import 'prismjs/components/prism-python'
 
 export function getCharTokenClasses(code: string, language: string): string[] {
     const classes: string[] = Array(code.length).fill('')

@@ -9,7 +9,8 @@ export async function POST(request: Request) {
         const body = await request.json()
         const { 
             snippetId, language, difficulty, wpm, rawWpm, consistency, 
-            wpmTimeline, charTimings, cpm, accuracy, timeTaken, duration, mistakes 
+            wpmTimeline, charTimings, cpm, accuracy, timeTaken, duration, mistakes,
+            isCustom, failed, strictMode, mode
         } = body
 
         if (!snippetId || !language) {
@@ -37,6 +38,22 @@ export async function POST(request: Request) {
             userId = guestUser.id
         }
 
+        // Anti-cheat / validation
+        let flagged = false
+        const parsedWpm = parseFloat(wpm)
+        const parsedAccuracy = parseFloat(accuracy)
+        
+        if (parsedWpm > 220 || (parsedAccuracy === 100 && parsedWpm > 150)) {
+            flagged = true
+        }
+
+        if (duration && timeTaken) {
+            const timeTakenNum = parseInt(timeTaken)
+            if (timeTakenNum < 2 && parsedWpm > 100) {
+                flagged = true
+            }
+        }
+
         // Create the TestResult
         const result = await prisma.testResult.create({
             data: {
@@ -53,15 +70,19 @@ export async function POST(request: Request) {
                 consistency: consistency !== undefined ? parseFloat(consistency) : null,
                 wpmTimeline: wpmTimeline || null,
                 charTimings: charTimings || null,
+                isCustom: isCustom || false,
+                failed: failed || false,
+                strictMode: strictMode || 'normal',
+                mode: mode || 'normal',
+                date: new Date().toISOString().split('T')[0],
+                flagged
             }
         })
 
         // Check for personal best
         let isNewPersonalBest = false
-        if (authUser && duration) {
+        if (authUser && duration && !failed && !isCustom && !flagged) {
             const parsedDuration = parseInt(duration)
-            const parsedWpm = parseFloat(wpm)
-            const parsedAccuracy = parseFloat(accuracy)
 
             const existingPB = await prisma.personalBest.findUnique({
                 where: {
@@ -119,18 +140,33 @@ export async function POST(request: Request) {
             const newAvgAccuracy = ((user.avgAccuracy * user.totalTests) + accuracy) / newTotalTests
 
             let newStreak = user.streak
+            let newStreakFreeze = user.streakFreeze || 0
+
             if (user.lastTestDate) {
                 const lastDate = new Date(user.lastTestDate)
                 const today = new Date()
                 
-                // Compare just the dates
-                const isConsecutive = (today.setHours(0,0,0,0) - lastDate.setHours(0,0,0,0)) === 86400000
-                const isSameDay = (today.setHours(0,0,0,0) === lastDate.setHours(0,0,0,0))
+                const msInDay = 86400000
+                const diffTime = today.setHours(0,0,0,0) - lastDate.setHours(0,0,0,0)
+                const isConsecutive = diffTime === msInDay
+                const isSameDay = diffTime === 0
 
                 if (isConsecutive) {
                     newStreak += 1
+                    if (newStreak % 7 === 0) {
+                        newStreakFreeze = Math.min(1, newStreakFreeze + 1)
+                    }
                 } else if (!isSameDay) {
-                    newStreak = 1
+                    // diffTime > msInDay (gap of 2 or more days)
+                    if (newStreakFreeze > 0) {
+                        newStreakFreeze -= 1
+                        newStreak += 1
+                        if (newStreak % 7 === 0) {
+                            newStreakFreeze = Math.min(1, newStreakFreeze + 1)
+                        }
+                    } else {
+                        newStreak = 1
+                    }
                 }
             } else {
                 newStreak = 1
@@ -144,7 +180,8 @@ export async function POST(request: Request) {
                     avgWpm: newAvgWpm,
                     avgAccuracy: newAvgAccuracy,
                     lastTestDate: new Date(),
-                    streak: newStreak
+                    streak: newStreak,
+                    streakFreeze: newStreakFreeze
                 }
             })
         }
@@ -157,9 +194,26 @@ export async function POST(request: Request) {
 }
 
 // GET leaderboard
-export async function GET() {
+export async function GET(request: Request) {
     try {
+        const { searchParams } = new URL(request.url)
+        const type = searchParams.get('type') // daily, leetcode, or all-time
+        
+        const whereClause: Record<string, unknown> = {
+            failed: false,
+            isCustom: false,
+            flagged: false
+        }
+
+        if (type === 'daily') {
+            const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+            whereClause.createdAt = { gte: oneDayAgo }
+        } else if (type === 'leetcode') {
+            whereClause.difficulty = 'algorithm'
+        }
+
         const leaderboard = await prisma.testResult.findMany({
+            where: whereClause,
             take: 20,
             orderBy: {
                 wpm: 'desc'

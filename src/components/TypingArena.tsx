@@ -20,6 +20,24 @@ export function TypingArena() {
     const resetTest = useTypingStore(state => state.resetTest)
     const fetchSnippet = useTypingStore(state => state.fetchSnippet)
     const getProgress = useTypingStore(state => state.getProgress)
+    const paceCaretWpm = useTypingStore(state => state.paceCaretWpm)
+    const startTime = useTypingStore(state => state.startTime)
+
+    const [paceIndex, setPaceIndex] = useState<number | null>(null)
+
+    useEffect(() => {
+        if (status !== 'running' || !startTime || paceCaretWpm === null) {
+            return
+        }
+
+        const interval = setInterval(() => {
+            const elapsedSeconds = (Date.now() - startTime) / 1000
+            const index = Math.floor((elapsedSeconds / 60) * (paceCaretWpm * 5))
+            setPaceIndex(index)
+        }, 100)
+
+        return () => clearInterval(interval)
+    }, [status, startTime, paceCaretWpm])
 
     const progress = getProgress()
 
@@ -192,6 +210,7 @@ export function TypingArena() {
                         }
 
                         const isCurrentChar = index === inputCharIndex
+                        const isPaceChar = index === paceIndex
 
                         // Handle newlines as full-width breaks so code wraps beautifully
                         if (char === '\n') {
@@ -203,6 +222,9 @@ export function TypingArena() {
                                 >
                                     {isCurrentChar && status !== 'finished' && (
                                         <span className="absolute left-0 bottom-[-2px] w-2 h-4 bg-white animate-pulse rounded-sm block"></span>
+                                    )}
+                                    {isPaceChar && status === 'running' && (
+                                        <span className="absolute left-0 bottom-[-2px] w-2 h-4 bg-secondary opacity-40 animate-pulse rounded-sm block pointer-events-none"></span>
                                     )}
                                 </div>
                             )
@@ -216,6 +238,9 @@ export function TypingArena() {
                             >
                                 {isCurrentChar && status !== 'finished' && (
                                     <span className="absolute left-0 bottom-[-2px] w-full h-[2px] bg-white animate-pulse rounded-sm block"></span>
+                                )}
+                                {isPaceChar && status === 'running' && (
+                                    <span className="absolute left-0 bottom-[-2px] w-full h-[2px] bg-secondary opacity-40 animate-pulse rounded-sm block pointer-events-none"></span>
                                 )}
                                 <span className={`transition-colors duration-100 ease-out select-none ${colorClass}`}>
                                     {char === " " ? "\u00A0" : char}

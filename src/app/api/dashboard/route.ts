@@ -18,7 +18,7 @@ export async function GET() {
 
     const dbUser = await prisma.user.findUnique({
       where: { id: authUser.userId },
-      select: { streak: true }
+      select: { streak: true, streakFreeze: true }
     })
 
     // Compute stats
@@ -33,6 +33,7 @@ export async function GET() {
       ? Math.max(...testResults.map(r => r.wpm))
       : 0
     const streak = dbUser?.streak || 0
+    const streakFreeze = dbUser?.streakFreeze || 0
 
     // Language breakdown
     const languageMap: Record<string, { count: number; avgWpm: number; totalWpm: number }> = {}
@@ -95,9 +96,48 @@ export async function GET() {
       ]
     })
 
-    // Heatmap Calculation
-    const heatmap: Record<string, number> = {}
-    const mockHeatmap = { '{': 14, ';': 9, '(': 5, '[': 3, '=': 7 }
+    // Activity and Weakness Heatmaps (last 365 days)
+    const oneYearAgo = new Date()
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+    const yearResults = await prisma.testResult.findMany({
+      where: {
+        userId: authUser.userId,
+        createdAt: { gte: oneYearAgo }
+      },
+      select: {
+        createdAt: true,
+        charTimings: true
+      }
+    })
+
+    const activityMap: Record<string, number> = {}
+    const charDelaySum: Record<string, number> = {}
+    const charDelayCount: Record<string, number> = {}
+
+    yearResults.forEach(r => {
+      const dateStr = new Date(r.createdAt).toISOString().split('T')[0]
+      activityMap[dateStr] = (activityMap[dateStr] || 0) + 1
+
+      if (r.charTimings && typeof r.charTimings === 'object') {
+        Object.entries(r.charTimings as Record<string, string | number>).forEach(([char, delay]) => {
+          const delayNum = typeof delay === 'number' ? delay : parseInt(String(delay))
+          if (!isNaN(delayNum)) {
+            charDelaySum[char] = (charDelaySum[char] || 0) + delayNum
+            charDelayCount[char] = (charDelayCount[char] || 0) + 1
+          }
+        })
+      }
+    })
+
+    const activityHeatmap = Object.entries(activityMap).map(([date, count]) => ({
+      date,
+      count
+    }))
+
+    const weaknessHeatmap: Record<string, number> = {}
+    Object.keys(charDelaySum).forEach(char => {
+      weaknessHeatmap[char] = Math.round(charDelaySum[char] / charDelayCount[char])
+    })
 
     return NextResponse.json({
       stats: {
@@ -106,12 +146,14 @@ export async function GET() {
         avgAccuracy,
         bestWpm,
         streak,
+        streakFreeze,
       },
       languageBreakdown,
       difficultyBreakdown,
       wpmTrend,
       recentTests,
-      heatmap: Object.keys(heatmap).length > 0 ? heatmap : mockHeatmap,
+      activityHeatmap,
+      weaknessHeatmap,
       personalBests: personalBests || []
     })
   } catch (error) {
